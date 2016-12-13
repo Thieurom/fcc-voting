@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/Thieurom/fcc-voting#readme",
   "dependencies": {
-    "express": "^4.14.0"
+    "express": "^4.14.0",
+    "path": "^0.12.7",
+    "pug": "^2.0.0-beta6"
   },
   "engines": {
     "node": "6.9.1",
