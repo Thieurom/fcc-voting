@@ -21,6 +21,18 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 app.use('/', main);
 
+app.use((req, res, next) => {
+  let err = new Error('Not Found');
+  err.status = 404;
+  next(err);
+});
+
+// Error handlers
+app.use((err, req, res, next) => {
+  res.status(err.status);
+  res.render('404', { error: err.message });
+});
+
 app.listen(PORT, () => {
   console.log(`Server is listening on port ${PORT} ...`);
 });
