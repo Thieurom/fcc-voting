@@ -1,4 +1,4 @@
-extends base
+extends layout.pug
 
 block header
   header.header
@@ -12,6 +12,8 @@ block header
 
 block main
   main.main
+    .main__wrapper
+      include includes/polls.pug
 
 
 block footer

@@ -4,7 +4,7 @@
   "description": "Voting App",
   "main": "server.j",
   "scripts": {
-    "start:dev": "./node_modules/.bin/nodemon server.js",
+    "dev": "./node_modules/.bin/nodemon server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -18,7 +18,9 @@
   },
   "homepage": "https://github.com/Thieurom/fcc-voting#readme",
   "dependencies": {
+    "body-parser": "^1.15.2",
     "express": "^4.14.0",
+    "mongodb": "^2.2.16",
     "path": "^0.12.7",
     "pug": "^2.0.0-beta6"
   },
