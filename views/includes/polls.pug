@@ -1,4 +1,12 @@
 each poll in polls
   .card
     .card__title
-      h2.h2= poll.poll
+      h2.h2
+        a(href='#', data-poll-id= poll._id.toString()).toggle-show= poll.poll
+
+    .card__body.is-hidden
+
+    .card__footer
+      .poll.clearfix
+          span.on-left Poll created by #[span.poll__author #{poll.creator}]
+          span.on-right #[span.poll__votes #{poll.votes}] votes

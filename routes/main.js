@@ -15,7 +15,6 @@ router.get('/', (req, res, next) => {
       return next(err);
     }
 
-    console.log(result);
     res.render('index', { title: 'Voting App' , polls: result });
   });
 });

@@ -30,6 +30,26 @@ a {
 }
 
 
+/* Utils */
+.clearfix::after {
+  content: '';
+  display: table;
+  clear: both;
+}
+
+.on-left {
+  float: left;
+}
+
+.on-right {
+  float: right;
+}
+
+.is-hidden {
+  display: none;
+}
+
+
 /* Component */
 .brand-logo {
   display: inline-block;
@@ -120,19 +140,13 @@ a {
 }
 
 
-.poll__desc {
-  float: left;
+.poll {
   font-size: 0.875rem;
 }
 
-.poll__author {
-  font-weight: 400;
-}
-
+.poll__author,
 .poll__votes {
-  float: right;
-  font-size: 0.875rem;
-  text-transform: uppercase;
+  font-weight: 400;
 }
 
 
@@ -248,8 +262,6 @@ a {
 
 .footer {
   height: 50px;
-  /*padding-top: 1rem;*/
-  /*padding-bottom: 1rem;*/
   line-height: 50px;
   font-size: 0.875rem;
   text-align: center;

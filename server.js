@@ -11,6 +11,7 @@ const DATABASE = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/data-dev
 
 // Routers
 const main = require('./routes/main');
+const api = require('./routes/api');
 
 // Database object
 let db;
@@ -31,7 +32,9 @@ app.use((req, res, next) => {
   next();
 });
 
+// Register routes
 app.use('/', main);
+app.use('/api', api);
 
 app.use((req, res, next) => {
   let err = new Error('Not Found');
