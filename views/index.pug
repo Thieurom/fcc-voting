@@ -1,21 +1,9 @@
 extends layout.pug
 
-block header
-  header.header
-    .header__wrapper
-      a.brand-logo(href='#') Voting App
-      
-      .nav-bar
-        a.nav-bar__link(href='#') Log in
-        a.nav-bar__link(href='#') Sign up
 
+block main_content
+  include includes/polls.pug
 
-block main
-  main.main
-    .main__wrapper
-      include includes/polls.pug
-
-
-block footer
-  footer.footer
-    .footer__note 2016. #[a.footer__link(href='#') Voting App]. Created by #[a.footer__link(href='https://twitter.com/lethieu') thieurom].
+append body
+  script(src='https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.4.0/Chart.min.js')
+  script(src='/js/main.js')

@@ -11,6 +11,8 @@ const DATABASE = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/data-dev
 
 // Routers
 const main = require('./routes/main');
+const login = require('./routes/login');
+const signup = require('./routes/signup');
 const api = require('./routes/api');
 
 // Database object
@@ -18,6 +20,10 @@ let db;
 
 // App instance
 const app = express();
+
+// Setup 3rd party middlewares
+app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.json());
 
 // Setup view engine
 app.set('views', path.join(__dirname, 'views'));
@@ -34,6 +40,8 @@ app.use((req, res, next) => {
 
 // Register routes
 app.use('/', main);
+app.use('/login', login);
+app.use('/signup', signup);
 app.use('/api', api);
 
 app.use((req, res, next) => {
@@ -43,6 +51,19 @@ app.use((req, res, next) => {
 });
 
 // Error handlers
+app.use((err, req, res, next) => {
+  console.log(err);
+  next(err);
+});
+
+app.use((err, req, res, next) => {
+  if (req.xhr) {
+    res.status(500).json({ error: 'Internal Server Error' });
+  } else {
+    next(err);
+  }
+});
+
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error', { error: err.message });

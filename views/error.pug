@@ -1,19 +1,7 @@
 extends layout.pug
 
-block header
-  header.header
-    .header__wrapper
-      a.brand-logo(href='#') Voting App
 
-
-block main
-  main.main
-    .main__wrapper
-      .card
-        .card__title
-          h2.h2= error
-
-
-block footer
-  footer.footer
-    .footer__note 2016. #[a.footer__link(href='#') Voting App]. Created by #[a.footer__link(href='https://twitter.com/lethieu') thieurom].
+block main_content
+  .card
+    .card__title
+        h2.h2= error

@@ -11,7 +11,6 @@ router.get('/', (req, res, next) => {
 
   collection.find().toArray((err, result) => {
     if (err) {
-      console.log(err);
       return next(err);
     }
 
