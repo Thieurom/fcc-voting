@@ -23,15 +23,15 @@ html(lang='en')
           else
             .nav-bar__dropdown= user.username
               ul.dropdown
-                li.dropdown__item #[a(href='#') Profile]
-                li.dropdown__item #[a(href='#') Settings]
+                li.dropdown__item #[a(href='/profile') Profile]
+                li.dropdown__item #[a(href='/settings') Settings]
                 li.dropdown__item #[a(href='/logout') Log out]
                 
             a.nav-bar__link(href='#') +
 
     main.main
       .main__wrapper
-        if (message.length > 0)
+        if (message && message.length > 0)
           .alert #{message} #[button.alert__close(type='button')]
 
         block main_content
