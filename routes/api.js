@@ -2,12 +2,13 @@
 
 const express = require('express');
 const ObjectID = require('mongodb').ObjectID;
+const db = require('../db');
+
 
 const router = express.Router();
 
 router.get('/poll/:poll_id', (req, res) => {
-  const db = req.db;
-  const collection = db.collection('polls');
+  const collection = db.get().collection('polls');
 
   collection.findOne({ _id: new ObjectID(req.params.poll_id) }, { _id: 0 }, (err, result) => {
     if (err) {

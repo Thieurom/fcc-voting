@@ -2,16 +2,16 @@
 
 const express = require('express');
 const bcrypt = require('bcrypt');
+const db = require('../db');
 
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('signup');
+  res.render('signup', { title: 'Voting App - Signup'});
 });
 
 router.post('/', (req, res, next) => {
-  const db = req.db;
   let username = req.body.username;
 
   bcrypt.hash(req.body.password, 10, (err, hash) => {
@@ -22,7 +22,9 @@ router.post('/', (req, res, next) => {
     try {
       // check the given username is existed on database or not
       // if not, create new user and save to database
-      db.collection('users').findOneAndUpdate(
+      const collection = db.get().collection('users');
+
+      collection.findOneAndUpdate(
         
         { username: username },
         { $setOnInsert:

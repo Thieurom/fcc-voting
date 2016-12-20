@@ -1,49 +1,48 @@
 'use strict'
 
-// Deps
+// Dependencies
 const express = require('express');
-const MongoClient = require('mongodb').MongoClient;
 const bodyParser = require('body-parser');
+const session = require('express-session');
+const flash = require('connect-flash');
 const path = require('path');
+const passport = require('./config/passport');
+
 
 const PORT = process.env.PORT || 3000;
 const DATABASE = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/data-dev';
 
-// Routers
-const main = require('./routes/main');
-const login = require('./routes/login');
-const signup = require('./routes/signup');
-const api = require('./routes/api');
-
-// Database object
-let db;
-
 // App instance
 const app = express();
 
-// Setup 3rd party middlewares
+// Database
+const db = require('./db');
+
+// Setup middlewares
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(flash());
+app.use(session({
+  secret: 'secret',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    // secure: false,
+    maxAge: 4*60*60*1000  // 4 hours
+  }
+}));
+app.use(passport.initialize());
+app.use(passport.session());
 
 // Setup view engine
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
-// Serve static files
-app.use(express.static(path.join(__dirname, 'public')));
+// Routes
+require('./routes')(app);
 
-// Make database accessible to routers
-app.use((req, res, next) => {
-  req.db = db;
-  next();
-});
-
-// Register routes
-app.use('/', main);
-app.use('/login', login);
-app.use('/signup', signup);
-app.use('/api', api);
-
+// Catch 404 error
 app.use((req, res, next) => {
   let err = new Error('Not Found');
   err.status = 404;
@@ -69,13 +68,12 @@ app.use((err, req, res, next) => {
   res.render('error', { error: err.message });
 });
 
-
-MongoClient.connect(DATABASE, (error, database) => {
+// Connect to the database before establish server
+db.connect(DATABASE, (error) => {
   if (error) {
-    return console.log(error);
+    console.log(error);
+    process.exit(1);
   }
-
-  db = database;
 
   app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT} ...`);

@@ -1,4 +1,18 @@
 (function() {
+  // Dismiss alert
+  var alertEl = document.querySelector('.alert');
+
+  if (alertEl) {
+    var closeBtn = alertEl.querySelector('.alert__close');
+
+    closeBtn.addEventListener('click', function(e) {
+      e.preventDefault();
+      alertEl.parentNode.removeChild(alertEl);
+    })
+  }
+
+
+  // Ajax for polls
   var cards = [].slice.call(document.getElementsByClassName('card'));
 
   cards.forEach(function(card) {
@@ -27,7 +41,7 @@
           }
         }
 
-        xhr.open('GET', window.location.origin + '/api/poll/' + pollId, true);
+        xhr.open('GET', '/api/poll/' + pollId, true);
         xhr.send(null);
       }
     });

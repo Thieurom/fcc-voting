@@ -7,11 +7,11 @@ block main_content
       h2.h2 Login
       
     .card__body
-      form.form(method='POST', action='/')
+      form.form(method='POST', action='/login')
         label.form__label(for='username') Name
-        input#username.form__input(type='text', required)
+        input#username.form__input(type='text', name='username', required)
 
         label.form__label(for='password') Password
-        input#password.form__input(type='password', required)
+        input#password.form__input(type='password', name='password', required)
 
         input.form__submit(type='submit', value='Login')
