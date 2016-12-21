@@ -177,7 +177,8 @@ a {
 }
 
 
-.form__submit {
+.form__submit,
+.card__remover {
   height: 34px;
   border: 0;
   padding-left: 1.5em;
@@ -193,11 +194,13 @@ a {
 }
 
 
-.form__submit:hover {
+.form__submit:hover,
+.card__remover:hover {
   background-color: #9b9b9b;
 }
 
-.form__submit:focus {
+.form__submit:focus,
+.card__remover:focus {
   outline: 0;
 }
 
@@ -246,6 +249,11 @@ a {
   color: rgba(74, 74, 74, 0.7);
   transform: rotateZ(45deg);
   transform-origin: 0.5em 0.5em;
+}
+
+
+.toggle-show {
+  cursor: pointer;
 }
 
 

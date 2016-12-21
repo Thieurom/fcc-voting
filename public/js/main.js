@@ -13,40 +13,59 @@
   // =============== //
 
 
-  // Ajax for polls
   var cards = [].slice.call(document.getElementsByClassName('card'));
 
   if (cards.length > 0) {
+    // Ajax for polls
     cards.forEach(function (card) {
       var toggle = card.querySelector('.toggle-show');
       var cardBody = card.querySelector('.card__body');
+      var remover = card.querySelector('.card__remover');
+      var poll = card.querySelector('span[data-poll-id]');
+      var pollId = poll.getAttribute('data-poll-id');
 
-      toggle.addEventListener('click', function (e) {
-        var canvasEl = card.querySelector('canvas');
+      if (toggle) {
+        toggle.addEventListener('click', function () {
+          var canvasEl = card.querySelector('canvas');
 
-        e.preventDefault();
-        cardBody.classList.toggle('is-hidden');
+          cardBody.classList.toggle('is-hidden');
 
-        if (!canvasEl) {
-          var xhr = new XMLHttpRequest();
-          var pollId = toggle.getAttribute('data-poll-id');
+          if (!canvasEl) {
+            var xhr = new XMLHttpRequest();
 
-          canvasEl = document.createElement('canvas');
-          canvasEl.setAttribute('width', 300);
-          canvasEl.setAttribute('height', 180);
-          cardBody.appendChild(canvasEl);
+            canvasEl = document.createElement('canvas');
+            canvasEl.setAttribute('width', 300);
+            canvasEl.setAttribute('height', 180);
+            cardBody.appendChild(canvasEl);
 
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-              var chartData = parseChartData(JSON.parse(xhr.responseText));
-              drawChartToCanvas(canvasEl, chartData);
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                var chartData = parseChartData(JSON.parse(xhr.responseText));
+                drawChartToCanvas(canvasEl, chartData);
+              }
             }
-          }
 
-          xhr.open('GET', '/api/poll/' + pollId, true);
+            xhr.open('GET', '/poll/' + pollId, true);
+            xhr.setRequestHeader('Accept', 'application/json');
+            xhr.send(null);
+          }
+        });
+
+      }
+
+
+      // Delete poll
+      if (remover) {
+        remover.addEventListener('click', function () {
+          // Make HTTP request with Delete method
+          var xhr = new XMLHttpRequest();
+
+          xhr.open('DELETE', '/poll/' + pollId, true);
           xhr.send(null);
-        }
-      });
+          
+          card.parentNode.removeChild(card);
+        });
+      }
     });
   }
   // =============== //

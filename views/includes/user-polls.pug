@@ -2,8 +2,7 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        a(href='#', data-poll-id= poll._id.toString()).toggle-show= poll.poll
+        span(data-poll-id= poll._id.toString())= poll.poll
 
     .card__footer
-      form.form(method='PUT', action='/profile')
-        input.form__submit(type='submit', value='Delete')
+      input.card__remover(type='button', value='Delete')

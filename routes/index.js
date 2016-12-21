@@ -1,14 +1,5 @@
 'use strict'
 
-const home = require('./home');
-const login = require('./login');
-const logout = require('./logout');
-const signup = require('./signup');
-const profile = require('./profile');
-const newpoll = require('./newpoll');
-const api = require('./api');
-
-
 module.exports = (app) => {
   // Store authenticated user to res's locals
   app.use((req, res, next) => {
@@ -16,24 +7,12 @@ module.exports = (app) => {
     next();
   });
 
-  // Homepage
-  app.use('/', home);
-
-  // Login
-  app.use('/login', login);
-
-  // Logout
-  app.use('/logout', logout);
-
-  // Signup
-  app.use('/signup', signup);
-
-  // profile
-  app.use('/profile', profile);
-
-  // New poll
-  app.use('/newpoll', newpoll);
-
-  // Api
-  app.use('/api', api);
+  // Register routers to app
+  app.use('/', require('./home'));
+  app.use('/login', require('./login'));
+  app.use('/logout', require('./logout'));
+  app.use('/signup', require('./signup'));
+  app.use('/profile', require('./profile'));
+  app.use('/newpoll', require('./newpoll'));
+  app.use('/poll', require('./poll'));
 };

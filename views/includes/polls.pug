@@ -2,7 +2,7 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        a(href='#', data-poll-id= poll._id.toString()).toggle-show= poll.poll
+        span(data-poll-id= poll._id.toString()).toggle-show= poll.poll
 
     .card__body.is-hidden
 

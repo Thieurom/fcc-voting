@@ -1,21 +1,14 @@
 'use strict'
 
 const express = require('express');
-const passport = require('../config/passport');
-
+const Auth = require('../config/auth');
 
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('login', { title: 'Voting App - Login', message: req.flash('loginMsg') });
+  res.render('login', { title: 'Voting App - Login', message: req.flash('successFlash') });
 });
 
-router.post('/',
-  passport.authenticate('local', {
-    successRedirect: '/',
-    failureRedirect: '/login',
-    failureFlash: true
-  })
-);
+router.post('/', Auth.login('/', '/login'));
 
 module.exports = router;

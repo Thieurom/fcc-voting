@@ -21,18 +21,9 @@ router.get('/', (req, res, next) => {
 function getAllPolls(cb) {
   const collection = db.get().collection('polls');
 
-  collection.find().toArray((err, result) => {
+  collection.find().sort({ _id: -1 }).toArray((err, result) => {
     cb(err, result);
   });
-}
-
-
-function isLoggedIn(req, res, next) {
-  if (req.isAuthenticated()) {
-    return next();
-  }
-
-  res.redirect('/');
 }
 
 module.exports = router;
