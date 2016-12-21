@@ -1,0 +1,20 @@
+extends layout.pug
+
+
+block main_content
+  .card
+    .card__title
+      h2.h2 Create new poll
+      
+    .card__body
+      form.form(method='POST', action='/newpoll')
+        input.form__input(type='text', name='poll', required, autofocus)
+        
+        label.form__label Option 1
+          input.form__input(type='text', name='option', required)
+
+        label.form__label Option 2
+          input.form__input(type='text', name='option', required)
+
+        input.form__submit(type='submit', value='Submit')
+        input.form__submit.form__submit--secondary(type='button', value='Add options')

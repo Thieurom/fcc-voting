@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
       return next(err);
     }
 
-    res.render('index', { title: 'Voting App', message: req.flash('logoutMsg'), user: req.user, polls: result });
+    res.render('index', { title: 'Voting App', message: req.flash('logoutMsg'), polls: result });
   });
 });
 
