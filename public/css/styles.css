@@ -157,6 +157,10 @@ a {
   font-weight: 400;
 }
 
+.form__label--clickable {
+  cursor: pointer;
+}
+
 .form__input {
   width: 100%;
   height: 32px;
@@ -210,6 +214,14 @@ a {
 
 .form__submit--secondary:hover {
   background-color: #838284;
+}
+
+
+.form__subheading {
+  font-size: 0.875rem;
+  font-weight: 400;
+  cursor: pointer;
+  user-select: none;
 }
 
 

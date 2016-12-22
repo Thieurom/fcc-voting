@@ -22,9 +22,10 @@
       var cardBody = card.querySelector('.card__body');
       var remover = card.querySelector('.card__remover');
       var poll = card.querySelector('span[data-poll-id]');
-      var pollId = poll.getAttribute('data-poll-id');
 
       if (toggle) {
+        var pollId = poll.getAttribute('data-poll-id');
+
         toggle.addEventListener('click', function () {
           var canvasEl = card.querySelector('canvas');
 
@@ -56,19 +57,41 @@
 
       // Delete poll
       if (remover) {
+        var pollId = poll.getAttribute('data-poll-id');
+
         remover.addEventListener('click', function () {
           // Make HTTP request with Delete method
           var xhr = new XMLHttpRequest();
 
           xhr.open('DELETE', '/poll/' + pollId, true);
           xhr.send(null);
-          
+
           card.parentNode.removeChild(card);
         });
       }
     });
   }
   // =============== //
+
+
+  // Add more options
+  const MAX_OPTIONS = 5;
+  var addOption = document.querySelector('.form__subheading');
+
+  if (addOption) {
+    addOption.addEventListener('click', function () {
+      var form = addOption.parentNode.parentNode;
+      var optionNumber = form.querySelectorAll('.form__label').length;
+
+      if (++optionNumber > MAX_OPTIONS) {
+        window.alert('Poll has maximum ' + MAX_OPTIONS + ' options!');
+      } else {
+        var newOption = createOptionEl(form, 'Option ' + optionNumber);
+
+        form.insertBefore(newOption, addOption.parentNode);
+      }
+    });
+  }
 
 
   // Helpers
@@ -93,5 +116,24 @@
         data: optionValues
       }]
     };
+  }
+
+
+  function createOptionEl(form, labelText) {
+    // One poll has maximum 5 options.
+    var optionLabel = document.createElement('label'),
+      input = document.createElement('input');
+
+    optionLabel.className = 'form__label';
+    optionLabel.textContent = labelText;
+
+    input.className = 'form__input';
+    input.type = 'text';
+    input.name = 'option';
+    input.required = true;
+
+    optionLabel.appendChild(input);
+
+    return optionLabel;
   }
 })();
