@@ -11,17 +11,17 @@ const router = express.Router();
 router.get('/:poll_id', (req, res, next) => {
   const collection = db.get().collection('polls');
 
-  collection.findOne({ _id: new ObjectID(req.params.poll_id) }, { _id: 0 }, (err, result) => {
+  collection.findOne({ _id: new ObjectID(req.params.poll_id) }, (err, result) => {
     if (err) {
-      next(err);
+      return next(err);
     }
 
     if (result) {
-      if (req.accepts('application/json')) {
+      if (req.xhr || req.accepts('html', 'json') === 'json') {
         return res.json(result);
+      } else {
+        return res.render('poll', { poll: result });
       }
-      
-      // TODO: render result as html here
     }
   });
 });
@@ -31,7 +31,7 @@ router.delete('/:poll_id', Auth.isLoggedIn, (req, res, next) => {
 
   try {
     collection.deleteOne({ _id: new ObjectID(req.params.poll_id) });
-  } catch(error) {
+  } catch (error) {
     return next(error);
   }
 

@@ -157,6 +157,14 @@ a {
   font-weight: 400;
 }
 
+.form__label--box {
+  height: 32px;
+  padding-left: 0.5em;
+  border: 1px solid #e8e8e8;
+  border-radius: 3px;
+  line-height: 32px;
+}
+
 .form__label--clickable {
   cursor: pointer;
 }
@@ -182,15 +190,18 @@ a {
 
 
 .form__submit,
-.card__remover {
+.card__remover,
+.card__ref {
+  display: inline-block;
   height: 34px;
   border: 0;
-  padding-left: 1.5em;
-  padding-right: 1.5em;
-  margin-top: 0.5rem;
+  padding: 0 1.5em;
+  margin-top: 1rem;
+  margin-bottom: 1rem;
   font-family: "Roboto", "Helvetica", sans-serif;
   font-size: 0.875rem;
   font-weight: 400;
+  line-height: 34px;
   background-color: #838284;
   color: #fff;
   transition: background-color 200ms;

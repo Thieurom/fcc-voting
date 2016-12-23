@@ -27,17 +27,16 @@
         var pollId = poll.getAttribute('data-poll-id');
 
         toggle.addEventListener('click', function () {
-          var canvasEl = card.querySelector('canvas');
+          cardBody.classList.remove('is-hidden');
+          var votes = parseInt(card.querySelector('.poll__votes').textContent);
 
-          cardBody.classList.toggle('is-hidden');
-
-          if (!canvasEl) {
+          if (votes > 0 && !card.querySelector('canvas')) {
             var xhr = new XMLHttpRequest();
 
-            canvasEl = document.createElement('canvas');
+            var canvasEl = document.createElement('canvas');
             canvasEl.setAttribute('width', 300);
             canvasEl.setAttribute('height', 180);
-            cardBody.appendChild(canvasEl);
+            cardBody.insertBefore(canvasEl, cardBody.lastChild);
 
             xhr.onreadystatechange = function () {
               if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
