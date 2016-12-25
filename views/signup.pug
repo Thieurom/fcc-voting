@@ -8,10 +8,10 @@ block main_content
       
     .card__body
       form.form(method='POST', action='/signup')
-        label.form__label(for='username') Username
-        input#username.form__input(type='text', name='username', required)
+        label.form__label Username
+          input.form__input(type='text', name='username', required)
 
-        label.form__label(for='password') Password
-        input#password.form__input(type='password', name='password', required)
+        label.form__label Password
+          input.form__input(type='password', name='password', required)
 
         input.form__submit(type='submit', value='Submit')

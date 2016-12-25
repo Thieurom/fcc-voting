@@ -38,5 +38,18 @@ router.delete('/:poll_id', Auth.isLoggedIn, (req, res, next) => {
   res.status(204).end();
 });
 
+router.put('/:poll_id', (req, res, next) => {
+  const collection = db.get().collection('polls');
+
+  try {
+    collection.updateOne({ _id: new ObjectID(req.params.poll_id), 'options.option': req.body.option },
+      { $inc: { 'options.$.vote': 1, 'votes': 1 } });
+  } catch (error) {
+    return next(error);
+  }
+
+  res.status(204).end();
+});
+
 
 module.exports = router;

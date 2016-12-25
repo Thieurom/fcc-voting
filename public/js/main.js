@@ -68,6 +68,32 @@
           card.parentNode.removeChild(card);
         });
       }
+
+
+      // Update poll for voting
+      var voteBtn = document.querySelector('.vote-btn');
+
+      if (voteBtn) {
+        var pollId = poll.getAttribute('data-poll-id');
+        var selectedOption = '';
+
+        var options = document.querySelectorAll('input[name="option"]');
+        options.forEach(function(option) {
+          option.addEventListener('click', function() {
+            selectedOption = option.value; 
+          });
+        });
+
+        voteBtn.addEventListener('click', function (e) {
+          e.preventDefault();
+
+          var xhr = new XMLHttpRequest();
+
+          xhr.open('PUT', '/poll/' + pollId, true);
+          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          xhr.send('option=' + selectedOption);
+        });
+      }
     });
   }
   // =============== //
@@ -103,9 +129,12 @@
 
 
   function parseChartData(jsonData) {
-    var optionNames = Object.keys(jsonData.options);
-    var optionValues = optionNames.map(function (optionName) {
-      return jsonData.options[optionName];
+    var optionNames = jsonData.options.map(function(option) {
+      return option.option;
+    });
+
+    var optionValues = jsonData.options.map(function(option) {
+      return option.vote;
     });
 
     return {

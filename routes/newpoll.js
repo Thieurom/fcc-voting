@@ -12,20 +12,19 @@ router.get('/', Auth.isLoggedIn, (req, res) => {
 });
 
 router.post('/', Auth.isLoggedIn, (req, res, next) => {
-  const poll = req.body.poll;
-  const options = {};
-
-  req.body.option.forEach((option) => {
-    options[option] = 0;
+  const question = req.body.question;
+  const options = req.body.option.map((option) => {
+    return { option: option, vote: 0 };
   });
 
   const collection = db.get().collection('polls');
 
   try {
     collection.insertOne({
-      poll: poll,
+      question: question,
       options: options,
-      creator: req.user.username
+      creator: req.user.username,
+      votes: 0
     });
 
   } catch (error) {
