@@ -10,4 +10,4 @@ each poll in polls
     .card__footer
       .poll.clearfix
         span.on-left Poll created by #[span.poll__author #{poll.creator}]
-        span.on-right #[span.poll__votes #{poll.votes || 0}] votes
+        span.on-right #[span.poll__votes #{poll.voters.registeredUser.length + poll.voters.anonymous.length}] votes

@@ -24,7 +24,10 @@ router.post('/', Auth.isLoggedIn, (req, res, next) => {
       question: question,
       options: options,
       creator: req.user.username,
-      votes: 0
+      voters: {
+        registeredUser: [],
+        anonymous: []
+      }
     });
 
   } catch (error) {

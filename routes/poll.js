@@ -1,17 +1,14 @@
 'use strict'
 
 const express = require('express');
-const ObjectID = require('mongodb').ObjectID;
-const db = require('../db');
+const Poll = require('../model/poll');
 const Auth = require('../config/auth');
 
 
 const router = express.Router();
 
 router.get('/:poll_id', (req, res, next) => {
-  const collection = db.get().collection('polls');
-
-  collection.findOne({ _id: new ObjectID(req.params.poll_id) }, (err, result) => {
+  Poll.getById(req.params.poll_id, (err, result) => {
     if (err) {
       return next(err);
     }
@@ -26,29 +23,43 @@ router.get('/:poll_id', (req, res, next) => {
   });
 });
 
+
 router.delete('/:poll_id', Auth.isLoggedIn, (req, res, next) => {
-  const collection = db.get().collection('polls');
+  Poll.delete(req.params.poll_id, (err, result) => {
+    if (err) {
+      return next(err);
+    }
 
-  try {
-    collection.deleteOne({ _id: new ObjectID(req.params.poll_id) });
-  } catch (error) {
-    return next(error);
-  }
-
-  res.status(204).end();
+    res.status(204).end();
+  })
 });
 
-router.put('/:poll_id', (req, res, next) => {
-  const collection = db.get().collection('polls');
 
-  try {
-    collection.updateOne({ _id: new ObjectID(req.params.poll_id), 'options.option': req.body.option },
-      { $inc: { 'options.$.vote': 1, 'votes': 1 } });
-  } catch (error) {
-    return next(error);
+router.put('/:poll_id', (req, res, next) => {
+  let voter;
+  const pollId = req.params.poll_id,
+    option = req.body.option;
+
+  if (req.isAuthenticated()) {
+    voter = req.user.username;
+    Poll.voteByRegisteredUser(voter, pollId, option, responseVoting);
+  } else {
+    voter = req.headers['x-forwarded-for'];
+    Poll.voteByAnonymous(voter, pollId, option, responseVoting);
   }
 
-  res.status(204).end();
+
+  function responseVoting(err, result) {
+    if (err) {
+      return next(err);
+    }
+
+    if (!result) {
+      res.json({ 'message':  'You once voted for this poll. You can\'t vote again.' });
+    } else {
+      res.json({ 'message': 'You successfully voted for this poll.' });
+    }
+  }
 });
 
 
