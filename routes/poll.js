@@ -17,13 +17,14 @@ router.get('/:poll_id', (req, res, next) => {
       if (req.xhr || req.accepts('html', 'json') === 'json') {
         return res.json(result);
       } else {
-        return res.render('poll', { poll: result });
+        return res.render('poll', { pageFuncs: 'vote-poll', poll: result });
       }
     }
   });
 });
 
 
+// Protected route
 router.delete('/:poll_id', Auth.isLoggedIn, (req, res, next) => {
   Poll.delete(req.params.poll_id, (err, result) => {
     if (err) {
@@ -55,9 +56,9 @@ router.put('/:poll_id', (req, res, next) => {
     }
 
     if (!result) {
-      res.json({ 'message':  'You once voted for this poll. You can\'t vote again.' });
+      res.status(403).end();
     } else {
-      res.json({ 'message': 'You successfully voted for this poll.' });
+      res.status(204).end();
     }
   }
 });

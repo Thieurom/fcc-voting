@@ -9,6 +9,7 @@ module.exports = (app) => {
 
   // Register routers to app
   app.use('/', require('./home'));
+  app.use('/user', require('./user'));
   app.use('/login', require('./login'));
   app.use('/logout', require('./logout'));
   app.use('/signup', require('./signup'));

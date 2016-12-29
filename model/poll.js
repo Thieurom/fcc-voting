@@ -8,7 +8,7 @@ const ObjectID = require('mongodb').ObjectID;
 exports.all = (done) => {
   const collection = db.get().collection('polls');
 
-  collection.find().sort({ _id: -1 }).toArray((err, result) => {
+  collection.find().sort({ datefield: -1 }).toArray((err, result) => {
     done(err, result);
   });
 };
@@ -25,13 +25,13 @@ exports.getById = (pollID, done) => {
 
 
 // Get all polls created by a specific creator
-exports.getByCreator = (creatorID, done) => {
+exports.getByCreator = (creator, done) => {
   const collection = db.get().collection('polls');
 
-  collection.find({ creator: creator }, (err, result) => {
+  collection.find({ creator: creator }).sort({ datefield: -1 }).toArray((err, result) => {
     done(err, result);
   });
-}
+};
 
 
 // Vote a poll with an option by a registered user

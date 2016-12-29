@@ -7,10 +7,13 @@ const Auth = require('../config/auth');
 
 const router = express.Router();
 
+// Protected route
 router.get('/', Auth.isLoggedIn, (req, res) => {
-  res.render('newpoll', { title: 'Voting App - New poll'});
+  res.render('newpoll', { title: 'New poll', pageFuncs: 'add-poll-option' });
 });
 
+
+// Protected route
 router.post('/', Auth.isLoggedIn, (req, res, next) => {
   const question = req.body.question;
   const options = req.body.option.map((option) => {
@@ -36,5 +39,6 @@ router.post('/', Auth.isLoggedIn, (req, res, next) => {
 
   res.redirect('/');
 });
+
 
 module.exports = router;

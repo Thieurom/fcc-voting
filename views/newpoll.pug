@@ -8,7 +8,7 @@ block main_content
       
     .card__body
       form.form(method='POST', action='/newpoll')
-        input.form__input(type='text', name='question', placeholder='Your poll content', required, autofocus)
+        input.form__input(type='text', name='question', placeholder='Your poll\'s question', required, autofocus)
         
         label.form__label Option 1
           input.form__input(type='text', name='option', required)
@@ -17,6 +17,6 @@ block main_content
           input.form__input(type='text', name='option', required)
         
         div
-          span.form__subheading More options (+)
+          span.form__add-option More options (+)
 
         input.form__submit(type='submit', value='Submit')

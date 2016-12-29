@@ -2,7 +2,17 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        span(data-poll-id= poll._id.toString())= poll.question
+        span(data-poll-id= poll._id.toString()).poll-question= poll.question
 
+    .card__body
+      form.form
+        each option in poll.options
+          label.form__label.form__label--bordered #[input(type='radio', name='option', value= option.option, disabled).form__radio] #{option.option}
+      
     .card__footer
-      input.card__remover(type='button', value='Delete')
+      form.form
+        div
+          span.form__add-option More options (+)
+
+        input.form__submit.form__submit--disabled(type='submit', value='Save', disabled)
+        button.form__submit.form__submit--secondary(type='button') #[span.fontawesome-remove-circle.font-icon] Delete

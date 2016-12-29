@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
       return next(err);
     }
 
-    res.render('index', { title: 'Voting App', message: req.flash('logoutMsg'), polls: result });
+    res.render('index', { pageFuncs: 'get-poll-chart close-alert', message: req.flash('logoutMsg'), polls: result });
   });
 });
 

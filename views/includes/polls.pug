@@ -2,12 +2,14 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        span(data-poll-id= poll._id.toString()).toggle-show= poll.question
+        span(data-poll-id= poll._id.toString()).poll-question.poll-question--has-result #{poll.question} #[span.fontawesome-bar-chart.font-icon.font-icon--small]
 
-    .card__body.is-hidden
-      a(href= '/poll/' + poll._id.toString()).card__ref Vote this poll
+    .card__body
 
     .card__footer
-      .poll.clearfix
-        span.on-left Poll created by #[span.poll__author #{poll.creator}]
-        span.on-right #[span.poll__votes #{poll.voters.registeredUser.length + poll.voters.anonymous.length}] votes
+      .poll-stat.clearfix
+        span.on-left
+          a(href= '/user/' + poll.creator) #[span.fontawesome-user.font-icon] #[span.poll-stat__author= poll.creator]
+
+        span.on-right
+          a(href= '/poll/' + poll._id) #[span.fontawesome-ok.font-icon] #[span.poll-stat__votes= poll.voters.registeredUser.length + poll.voters.anonymous.length]

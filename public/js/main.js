@@ -1,86 +1,163 @@
-(function () {
-  // Dismiss alert
-  var alertEl = document.querySelector('.alert');
+/**
+ * This client script includes all the functions needed for throughout all pages.
+ * But for each page (or route), only neccessary functions will be loaded/executed.
+ * In order to do that, each page has to indicate what functions will be loaded.
+ * 
+ * Example:
+ * -------------
+ * The page at path `/poll/{pollId}` in which user can make a vote will be like as below:
+ * 
+ *  <body data-page-funcs="vote-poll">
+ *    ... markup ...
+ *  </body>
+ * 
+ * Then when page is loaded, it loades along with function named `votePoll`.
+ * Note that, the function names in body tag is hyphened, meanwhile the `real`
+ * function names that will be loaded is camelCase.
+ * 
+ * --------------
+ * 
+ * Credit: Paul Irish - https://www.paulirish.com/2009/markup-based-unobtrusive-comprehensive-dom-ready-execution/
+ */
 
-  if (alertEl) {
-    var closeBtn = alertEl.querySelector('.alert__close');
 
-    closeBtn.addEventListener('click', function (e) {
-      e.preventDefault();
-      alertEl.parentNode.removeChild(alertEl);
-    })
-  }
-  // =============== //
+// App namespace
+var app = {
+  closeAlert: {
+    init: function () {
+      var alertEl = document.querySelector('.alert');
+
+      if (alertEl) {
+        var closeBtn = alertEl.querySelector('.alert__close');
+
+        closeBtn.addEventListener('click', function () {
+          alertEl.parentNode.removeChild(alertEl);
+        });
+      }
+    }
+  },
 
 
-  var cards = [].slice.call(document.getElementsByClassName('card'));
+  // Add new option to new/existing poll
+  addPollOption: {
+    init: function () {
+      var addBtn = document.querySelector('.form__add-option');
 
-  if (cards.length > 0) {
-    // Ajax for polls
-    cards.forEach(function (card) {
-      var toggle = card.querySelector('.toggle-show');
-      var cardBody = card.querySelector('.card__body');
-      var remover = card.querySelector('.card__remover');
-      var poll = card.querySelector('span[data-poll-id]');
+      if (addBtn) {
+        addBtn.addEventListener('click', function () {
+          var form = addBtn.parentNode.parentNode;
+          var optionNumber = form.querySelectorAll('.form__label').length + 1;
+          var newOption = app.addPollOption.createOptionEl(form, 'Option ' + optionNumber);
 
-      if (toggle) {
-        var pollId = poll.getAttribute('data-poll-id');
+          form.insertBefore(newOption, addBtn.parentNode);
+        });
+      }
+    },
 
-        toggle.addEventListener('click', function () {
-          cardBody.classList.remove('is-hidden');
-          var votes = parseInt(card.querySelector('.poll__votes').textContent);
+    createOptionEl: function (form, labelText) {
+      var optionLabel = document.createElement('label'),
+        input = document.createElement('input');
 
-          if (votes > 0 && !card.querySelector('canvas')) {
-            var xhr = new XMLHttpRequest();
+      optionLabel.className = 'form__label';
+      optionLabel.textContent = labelText;
 
-            var canvasEl = document.createElement('canvas');
-            canvasEl.setAttribute('width', 300);
-            canvasEl.setAttribute('height', 180);
-            cardBody.insertBefore(canvasEl, cardBody.lastChild);
+      input.className = 'form__input';
+      input.type = 'text';
+      input.name = 'option';
+      input.required = true;
 
-            xhr.onreadystatechange = function () {
-              if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                var chartData = parseChartData(JSON.parse(xhr.responseText));
-                drawChartToCanvas(canvasEl, chartData);
+      optionLabel.appendChild(input);
+
+      return optionLabel;
+    }
+  },
+
+
+  // Get the poll's votes data and draw chart to canvas
+  getPollChart: {
+    init: function () {
+      var cards = [].slice.call(document.getElementsByClassName('card'));
+
+      if (cards.length > 0) {
+        cards.forEach(function (card) {
+          var toggle = card.querySelector('.poll-question--has-result');
+          var cardBody = card.querySelector('.card__body');
+          var poll = card.querySelector('span[data-poll-id]');
+
+          if (toggle) {
+            var pollId = poll.getAttribute('data-poll-id');
+
+            toggle.addEventListener('click', function () {
+              var votes = parseInt(card.querySelector('.poll-stat__votes').textContent);
+
+              if (votes > 0 && !card.querySelector('canvas')) {
+                var xhr = new XMLHttpRequest();
+
+                var canvasEl = document.createElement('canvas');
+                canvasEl.setAttribute('width', 300);
+                canvasEl.setAttribute('height', 180);
+                cardBody.appendChild(canvasEl);
+
+                xhr.onreadystatechange = function () {
+                  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var chartData = app.getPollChart.parseChartData(JSON.parse(xhr.responseText));
+                    app.getPollChart.drawChartToCanvas(canvasEl, chartData);
+                  }
+                }
+
+                xhr.open('GET', '/poll/' + pollId, true);
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.send(null);
               }
-            }
-
-            xhr.open('GET', '/poll/' + pollId, true);
-            xhr.setRequestHeader('Accept', 'application/json');
-            xhr.send(null);
+            });
           }
         });
-
       }
+    },
+
+    drawChartToCanvas: function (canvas, data) {
+      var pollChart = new Chart(canvas, {
+        type: 'horizontalBar',
+        data: data
+      });
+    },
+
+    parseChartData: function (jsonData) {
+      var optionNames = jsonData.options.map(function (option) {
+        return option.option;
+      });
+
+      var optionValues = jsonData.options.map(function (option) {
+        return option.vote;
+      });
+
+      return {
+        labels: optionNames,
+        datasets: [{
+          label: 'Number of votes',
+          data: optionValues
+        }]
+      };
+    }
+  },
 
 
-      // Delete poll
-      if (remover) {
-        var pollId = poll.getAttribute('data-poll-id');
-
-        remover.addEventListener('click', function () {
-          // Make HTTP request with Delete method
-          var xhr = new XMLHttpRequest();
-
-          xhr.open('DELETE', '/poll/' + pollId, true);
-          xhr.send(null);
-
-          card.parentNode.removeChild(card);
-        });
-      }
-
-
-      // Update poll for voting
-      var voteBtn = document.querySelector('.vote-btn');
+  // Vote the poll
+  votePoll: {
+    init: function () {
+      var voteBtn = document.querySelector('.form__submit');
 
       if (voteBtn) {
+        var card = document.querySelector('.card');
+        var poll = card.querySelector('span[data-poll-id]');
         var pollId = poll.getAttribute('data-poll-id');
         var selectedOption = '';
 
         var options = document.querySelectorAll('input[name="option"]');
-        options.forEach(function(option) {
-          option.addEventListener('click', function() {
-            selectedOption = option.value; 
+
+        options.forEach(function (option) {
+          option.addEventListener('click', function () {
+            selectedOption = option.value;
           });
         });
 
@@ -89,79 +166,99 @@
 
           var xhr = new XMLHttpRequest();
 
+          xhr.onreadystatechange = function () {
+            if (xhr.readyState === XMLHttpRequest.DONE) {
+              if (xhr.status === 204) {
+                poll.textContent = 'You just voted successfully!';
+                var cardBody = card.querySelector('.card__body');
+                card.removeChild(cardBody);
+              } else {
+                window.alert('You can vote only once for each poll!');
+              }
+            }
+          }
+
           xhr.open('PUT', '/poll/' + pollId, true);
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
           xhr.send('option=' + selectedOption);
         });
       }
-    });
+    }
+  },
+
+
+  // Edit poll
+  /*
+  editPoll: {
+    init: function () {
+      var saveBtn = document.querySelector('.save');
+
+      if (saveBtn) {
+        var xhr = new XMLHttpRequest();
+
+        xhr.onreadystatechange = function () {
+          if (xhr.readyState === XMLHttpRequest.DONE) {
+            if (xhr.status === 204) {
+
+            }
+          }
+        }
+
+        xhr.open('PUT', '/poll/' + pollId, true);
+        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+        // xhr.send('options='  )
+      }
+    }
+  },
+  */
+
+
+  // Delete poll
+  deletePoll: {
+    init: function () {
+      var polls = [].slice.call(document.getElementsByClassName('card'));
+
+      if (polls.length > 0) {
+        polls.forEach(function (poll) {
+          var pollId = poll.querySelector('.poll-question').getAttribute('data-poll-id');
+          var deleteBtn = poll.querySelector('.form__submit--secondary');
+
+          deleteBtn.addEventListener('click', function () {
+            var xhr = new XMLHttpRequest();
+
+            xhr.open('DELETE', '/poll/' + pollId, true);
+            xhr.send(null);
+
+            poll.parentNode.removeChild(poll);
+          })
+        });
+      }
+    }
   }
-  // =============== //
+};
 
 
-  // Add more options
-  const MAX_OPTIONS = 5;
-  var addOption = document.querySelector('.form__subheading');
+// util
+var util = {
+  loadFunctions: function (namespace) {
+    var funcNames = document.body.getAttribute('data-page-funcs').split(/\s+/);
 
-  if (addOption) {
-    addOption.addEventListener('click', function () {
-      var form = addOption.parentNode.parentNode;
-      var optionNumber = form.querySelectorAll('.form__label').length;
+    funcNames.forEach(function (funcName) {
+      var func = util.camelCase(funcName);
 
-      if (++optionNumber > MAX_OPTIONS) {
-        window.alert('Poll has maximum ' + MAX_OPTIONS + ' options!');
-      } else {
-        var newOption = createOptionEl(form, 'Option ' + optionNumber);
-
-        form.insertBefore(newOption, addOption.parentNode);
+      if (func && namespace[func] && namespace[func].init) {
+        namespace[func].init();
       }
     });
-  }
+  },
 
-
-  // Helpers
-  function drawChartToCanvas(canvas, data) {
-    var pollChart = new Chart(canvas, {
-      type: 'horizontalBar',
-      data: data
+  camelCase: function (value) {
+    return value.replace(/-(.)/g, function (match, p1) {
+      return p1.toUpperCase();
     });
   }
+};
 
 
-  function parseChartData(jsonData) {
-    var optionNames = jsonData.options.map(function(option) {
-      return option.option;
-    });
-
-    var optionValues = jsonData.options.map(function(option) {
-      return option.vote;
-    });
-
-    return {
-      labels: optionNames,
-      datasets: [{
-        label: 'Number of votes',
-        data: optionValues
-      }]
-    };
-  }
-
-
-  function createOptionEl(form, labelText) {
-    // One poll has maximum 5 options.
-    var optionLabel = document.createElement('label'),
-      input = document.createElement('input');
-
-    optionLabel.className = 'form__label';
-    optionLabel.textContent = labelText;
-
-    input.className = 'form__input';
-    input.type = 'text';
-    input.name = 'option';
-    input.required = true;
-
-    optionLabel.appendChild(input);
-
-    return optionLabel;
-  }
-})();
+// Load app's functions
+util.loadFunctions(app);

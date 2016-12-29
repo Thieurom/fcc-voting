@@ -5,10 +5,11 @@ block main_content
   .card
     .card__title
       h2.h2
-        span(data-poll-id= poll._id.toString())= poll.question
+        span(data-poll-id= poll._id.toString()).poll-question= poll.question
       
     .card__body
-      each option in poll.options
-        .option-box #[input(type='radio', name='option', value= option.option).form__radio] #{option.option}
+      form.form
+        each option in poll.options
+          label.form__label.form__label--bordered #[input(type='radio', name='option', value= option.option).form__radio] #{option.option}
 
-      input.form__submit.vote-btn(type='button', value='Vote')
+        input.form__submit(type='button', value='Vote')

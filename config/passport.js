@@ -48,11 +48,6 @@ passport.deserializeUser((req, id, done) => {
   User.getById(id, (err, user) => {
     done(err, user);
   });
-  // const collection = db.get().collection('users');
-
-  // collection.findOne({ _id: new ObjectID(id) }, (err, user) => {
-  //   done(err, user);
-  // });
 });
 
 
