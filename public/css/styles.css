@@ -164,6 +164,9 @@ a {
 .form__input[name$='question'] {
   margin-bottom: 1rem;
 }
+.form__radio {
+  margin-right: 0.5rem;
+}
 .form__submit {
   display: inline-block;
   height: 34px;

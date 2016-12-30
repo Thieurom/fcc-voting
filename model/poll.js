@@ -8,7 +8,7 @@ const ObjectID = require('mongodb').ObjectID;
 exports.all = (done) => {
   const collection = db.get().collection('polls');
 
-  collection.find().sort({ datefield: -1 }).toArray((err, result) => {
+  collection.find().sort({ _id: -1 }).toArray((err, result) => {
     done(err, result);
   });
 };
@@ -28,7 +28,7 @@ exports.getById = (pollID, done) => {
 exports.getByCreator = (creator, done) => {
   const collection = db.get().collection('polls');
 
-  collection.find({ creator: creator }).sort({ datefield: -1 }).toArray((err, result) => {
+  collection.find({ creator: creator }).sort({ _id: -1 }).toArray((err, result) => {
     done(err, result);
   });
 };
@@ -60,7 +60,18 @@ exports.voteByAnonymous = (voter, pollID, pollOption, done) => {
 };
 
 
-// Delete an exist poll
+// Add one or more options to an existing polls
+exports.addOptions = (pollID, pollOptions, done) => {
+  const collection = db.get().collection('polls');
+
+  collection.updateOne({ _id: new ObjectID(pollID) },
+    { $push: { options: { $each: pollOptions } } }, (err, result) => {
+      done(err, result.modifiedCount);
+    });
+};
+
+
+// Delete an existing poll
 exports.delete = (pollID, done) => {
   const collection = db.get().collection('polls');
 
@@ -70,3 +81,19 @@ exports.delete = (pollID, done) => {
 };
 
 
+// New poll
+exports.new = (question, options, creator, done) => {
+  const collection = db.get().collection('polls');
+
+  collection.insertOne({
+    question: question,
+    options: options,
+    creator: creator,
+    voters: {
+      registeredUser: [],
+      anonymous: []
+    }
+  }, (err, result) => {
+    done(err, result);
+  });
+};

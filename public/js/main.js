@@ -47,14 +47,20 @@ var app = {
         addBtn.addEventListener('click', function () {
           var form = addBtn.parentNode.parentNode;
           var optionNumber = form.querySelectorAll('.form__label').length + 1;
-          var newOption = app.addPollOption.createOptionEl(form, 'Option ' + optionNumber);
+          var newOption = app.addPollOption.createOptionEl('Option ' + optionNumber);
 
           form.insertBefore(newOption, addBtn.parentNode);
+
+          var saveBtn = form.querySelector('.form__submit--disabled');
+          if (saveBtn) {
+            saveBtn.classList.remove('form__submit--disabled');
+            saveBtn.removeAttribute('disabled');
+          }
         });
       }
     },
 
-    createOptionEl: function (form, labelText) {
+    createOptionEl: function (labelText) {
       var optionLabel = document.createElement('label'),
         input = document.createElement('input');
 
@@ -64,7 +70,9 @@ var app = {
       input.className = 'form__input';
       input.type = 'text';
       input.name = 'option';
-      input.required = true;
+      input.addEventListener('input', function () {
+        this.setCustomValidity('');
+      });
 
       optionLabel.appendChild(input);
 
@@ -180,7 +188,7 @@ var app = {
 
           xhr.open('PUT', '/poll/' + pollId, true);
           xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-          xhr.send('option=' + selectedOption);
+          xhr.send('option=' + selectedOption + '&operation=vote');
         });
       }
     }
@@ -188,29 +196,82 @@ var app = {
 
 
   // Edit poll
-  /*
   editPoll: {
     init: function () {
-      var saveBtn = document.querySelector('.save');
+      var polls = [].slice.call(document.getElementsByClassName('card'));
 
-      if (saveBtn) {
-        var xhr = new XMLHttpRequest();
+      if (polls.length > 0) {
+        polls.forEach(function (poll) {
+          var pollId = poll.querySelector('.poll-question').getAttribute('data-poll-id');
+          var saveBtn = poll.querySelectorAll('.form__submit')[0];
+          var form = saveBtn.parentNode;
 
-        xhr.onreadystatechange = function () {
-          if (xhr.readyState === XMLHttpRequest.DONE) {
-            if (xhr.status === 204) {
+          saveBtn.addEventListener('click', function (e) {
+            var inputEls = [].slice.call(form.querySelectorAll('.form__input'));
 
+            if (inputEls.length > 0) {
+              inputEls.forEach(function (inputEl) {
+                if (!inputEl.value) {
+                  inputEl.setCustomValidity('Please enter new option.');
+                } else {
+                  inputEl.setCustomValidity('');
+                }
+              });
             }
-          }
-        }
 
-        xhr.open('PUT', '/poll/' + pollId, true);
-        xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-        // xhr.send('options='  )
+            if (form.checkValidity()) {
+              e.preventDefault();
+
+              var option = [];
+
+              inputEls.forEach(function (inputEl) {
+                option.push('option=' + inputEl.value);
+              });
+
+              var xhr = new XMLHttpRequest();
+
+              xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                  if (xhr.status === 204) {
+                    // create voted option
+                    var votedForm = poll.querySelector('.form');
+
+                    inputEls.forEach(function (inputEl) {
+                      votedForm.appendChild(app.editPoll.createVotedOptionEl(inputEl.value));
+                      form.removeChild(inputEl.parentNode);
+                    });
+                  }
+                }
+              }
+
+              xhr.open('PUT', '/poll/' + pollId, true);
+              xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+              xhr.send(option.join('&') + '&operation=edit');
+            }
+          });
+        });
       }
+    },
+
+    createVotedOptionEl: function (option) {
+      var votedOptionEl = document.createElement('label');
+      votedOptionEl.className = 'form__label form__label--bordered';
+
+      var input = document.createElement('input');
+      input.type = 'radio';
+      input.className = 'form__radio';
+      input.name = 'option';
+      input.value = option;
+      input.disabled = true;
+
+      var text = document.createTextNode(option);
+
+      votedOptionEl.appendChild(input);
+      votedOptionEl.appendChild(text);
+
+      return votedOptionEl;
     }
   },
-  */
 
 
   // Delete poll
@@ -238,13 +299,13 @@ var app = {
 };
 
 
-// util
-var util = {
+// Loader
+var LOADER = {
   loadFunctions: function (namespace) {
     var funcNames = document.body.getAttribute('data-page-funcs').split(/\s+/);
 
     funcNames.forEach(function (funcName) {
-      var func = util.camelCase(funcName);
+      var func = LOADER.util.camelCase(funcName);
 
       if (func && namespace[func] && namespace[func].init) {
         namespace[func].init();
@@ -252,13 +313,15 @@ var util = {
     });
   },
 
-  camelCase: function (value) {
-    return value.replace(/-(.)/g, function (match, p1) {
-      return p1.toUpperCase();
-    });
+  util: {
+    camelCase: function (value) {
+      return value.replace(/-(.)/g, function (match, p1) {
+        return p1.toUpperCase();
+      });
+    }
   }
 };
 
 
 // Load app's functions
-util.loadFunctions(app);
+LOADER.loadFunctions(app);

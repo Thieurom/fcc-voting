@@ -7,7 +7,7 @@ const Auth = require('../config/auth');
 
 const router = express.Router();
 
-// Protect route
+// Protected route
 router.get('/', Auth.isLoggedIn, (req, res, next) => {
   Poll.getByCreator(req.user.username, (err, result) => {
     if (err) {

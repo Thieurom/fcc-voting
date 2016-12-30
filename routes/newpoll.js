@@ -1,7 +1,7 @@
 'use strict'
 
 const express = require('express');
-const db = require('../db');
+const Poll = require('../model/poll');
 const Auth = require('../config/auth');
 
 
@@ -20,24 +20,13 @@ router.post('/', Auth.isLoggedIn, (req, res, next) => {
     return { option: option, vote: 0 };
   });
 
-  const collection = db.get().collection('polls');
+  Poll.new(question, options, req.user.username, (err, result) => {
+    if (err) {
+      return next(err);
+    }
 
-  try {
-    collection.insertOne({
-      question: question,
-      options: options,
-      creator: req.user.username,
-      voters: {
-        registeredUser: [],
-        anonymous: []
-      }
-    });
-
-  } catch (error) {
-    return next(error);
-  }
-
-  res.redirect('/');
+    res.redirect('/');
+  });
 });
 
 
