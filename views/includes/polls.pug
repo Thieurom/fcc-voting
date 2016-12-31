@@ -2,9 +2,12 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        span(data-poll-id= poll._id.toString()).poll-question.poll-question--has-result #{poll.question} #[span.fontawesome-bar-chart.font-icon.font-icon--small]
+        if (poll.voters.registeredUser.length + poll.voters.anonymous.length)
+          span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[span.fontawesome-bar-chart.font-icon.font-icon--small]
+        else
+          span(data-poll-id= poll._id.toString()).poll-question #{poll.question}
 
-    .card__body
+    .card__body.is-hidden
 
     .card__footer
       .poll-stat.clearfix
@@ -12,4 +15,4 @@ each poll in polls
           a(href= '/user/' + poll.creator) #[span.fontawesome-user.font-icon] #[span.poll-stat__author= poll.creator]
 
         span.on-right
-          a(href= '/poll/' + poll._id) #[span.fontawesome-ok.font-icon] #[span.poll-stat__votes= poll.voters.registeredUser.length + poll.voters.anonymous.length]
+          a(href= '/poll/' + poll._id) #[span.fontawesome-check.font-icon] #[span.poll-stat__votes= poll.voters.registeredUser.length + poll.voters.anonymous.length]

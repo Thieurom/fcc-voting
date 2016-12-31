@@ -2,7 +2,7 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        span(data-poll-id= poll._id.toString()).poll-question= poll.question
+        span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[span.fontawesome-edit.font-icon.font-icon--small]
 
     .card__body
       form.form

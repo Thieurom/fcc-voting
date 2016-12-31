@@ -88,7 +88,7 @@ var app = {
 
       if (cards.length > 0) {
         cards.forEach(function (card) {
-          var toggle = card.querySelector('.poll-question--has-result');
+          var toggle = card.querySelector('.show-card-full');
           var cardBody = card.querySelector('.card__body');
           var poll = card.querySelector('span[data-poll-id]');
 
@@ -105,6 +105,9 @@ var app = {
                 canvasEl.setAttribute('width', 300);
                 canvasEl.setAttribute('height', 180);
                 cardBody.appendChild(canvasEl);
+                if (cardBody.classList.contains('is-hidden')) {
+                  cardBody.classList.remove('is-hidden');
+                }
 
                 xhr.onreadystatechange = function () {
                   if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
@@ -293,6 +296,53 @@ var app = {
             poll.parentNode.removeChild(poll);
           })
         });
+      }
+    }
+  },
+
+
+  // Update password
+  updatePassword: {
+    init: function () {
+      var cards = [].slice.call(document.getElementsByClassName('card'));
+
+      if (cards.length > 0) {
+        cards.forEach(function (card) {
+          var form = card.querySelector('.form');
+          var currentPasswordEl = card.querySelector('input[name="password"]'),
+            newPasswordEl = card.querySelector('input[name="newPassword"]');
+
+          var updateBtn = card.querySelector('input[type="submit"]');
+
+          currentPasswordEl.addEventListener('input', function () {
+            this.setCustomValidity('');
+          });
+
+          newPasswordEl.addEventListener('input', function () {
+            this.setCustomValidity('');
+          });
+
+          updateBtn.addEventListener('click', function (e) {
+            // Validate empty inputs
+            if (!currentPasswordEl.value) {
+              currentPasswordEl.setCustomValidity('Please enter your current password!');
+            } else {
+              currentPasswordEl.setCustomValidity('');
+            }
+
+            if (!newPasswordEl.value) {
+              newPasswordEl.setCustomValidity('Please enter your new password!');
+            } else if (newPasswordEl.value === currentPasswordEl.value) {
+              newPasswordEl.setCustomValidity('New password must be different than current password!');
+            } else {
+              newPasswordEl.setCustomValidity('');
+            }
+
+            // if (!form.checkValidity()) {
+              // e.preventDefault();
+            // }
+          })
+        })
       }
     }
   }

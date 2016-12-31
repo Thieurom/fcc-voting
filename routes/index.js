@@ -16,4 +16,5 @@ module.exports = (app) => {
   app.use('/profile', require('./profile'));
   app.use('/newpoll', require('./newpoll'));
   app.use('/poll', require('./poll'));
+  app.use('/settings', require('./setting'));
 };

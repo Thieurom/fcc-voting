@@ -23,7 +23,7 @@ router.post('/', (req, res, next) => {
 
     if (result.value) {
       // given username already exists in database
-      req.flash('signupMsg', username + ' has been registered for username.');
+      req.flash('signupMsg', username + ' is not available.');
       res.redirect('signup');
     } else {
       console.log('New user inserted to database!');

@@ -11,7 +11,7 @@ exports.register = (username, password, done) => {
 
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
-      return next(err);
+      return done(err);
     }
 
     // check the given username is existed on database or not
@@ -53,3 +53,13 @@ exports.getByName = (name, done) => {
     done(err, user);
   });
 };
+
+
+// Change password
+exports.saveNewPassword = (user, passwordHash, done) => {
+  const collection = db.get().collection('users');
+
+  collection.updateOne({ _id: user._id }, { $set: { passwordHash: passwordHash } }, (err, result) => {
+    done(err, result.modifiedCount);
+  });
+}

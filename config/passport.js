@@ -2,7 +2,7 @@
 
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
-const bcrypt = require('bcrypt');
+const Utils = require('./utils');
 const ObjectID = require('mongodb').ObjectID;
 const User = require('../model/user');
 
@@ -21,6 +21,19 @@ passport.use(new LocalStrategy({
         return done(null, false, req.flash('loginMsg', 'Incorrect username!'));
       }
 
+      Utils.validatePassword(password, user.passwordHash, (error, same) => {
+        if (error) {
+          return done(err);
+        }
+
+        if (!same) {
+          return done(null, false, req.flash('loginMsg', 'Incorrect password!'));
+        }
+
+        return done(null, user);
+      });
+
+      /*
       bcrypt.compare(password, user.passwordHash, (err, same) => {
         if (err) {
           return done(err);
@@ -32,6 +45,7 @@ passport.use(new LocalStrategy({
 
         return done(null, user);
       });
+      */
     });
   });
 }));

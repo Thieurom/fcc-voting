@@ -1,0 +1,15 @@
+extends layout.pug
+
+
+block main_content
+  .card
+    .card__title
+      h2.h2 Settings - Change password
+      
+    .card__body
+      form.form(method='POST', action='/settings')
+        label.form__label Current password #[input.form__input(type='password', name='password')]
+
+        label.form__label New password #[input.form__input(type='password', name='newPassword')]
+
+        input.form__submit(type='submit', value='Update')

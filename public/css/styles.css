@@ -123,7 +123,7 @@ a {
   padding-top: 1rem;
 }
 
-.poll-question--has-result {
+.show-card-full {
   cursor: pointer;
 }
 
@@ -248,6 +248,10 @@ a {
 
 .on-right {
   float: right;
+}
+
+.is-hidden {
+  display: none;
 }
 
 /* Layout */
