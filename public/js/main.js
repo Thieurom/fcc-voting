@@ -301,6 +301,30 @@ var app = {
   },
 
 
+  sharePoll: {
+    init: function () {
+      var polls = [].slice.call(document.getElementsByClassName('card'));
+
+      if (polls.length > 0) {
+        polls.forEach(function (poll) {
+          var pollId = poll.querySelector('.poll-question').getAttribute('data-poll-id');
+          var shareBtn = poll.querySelector('.form__submit--secondary');
+
+          shareBtn.addEventListener('click', function () {
+            var TWITTER_BASE_URL = 'https://twitter.com/intent/tweet';
+            var pollLink = window.location.href;
+
+            var tweetContent = poll.querySelector('.poll-question').textContent;
+            var tweetLink = TWITTER_BASE_URL  + '?url=' + pollLink + '&text=' + tweetContent;
+
+            window.open(tweetLink, 'VotingAppWindow', 'width=600,height=300,resizable=yes,scrollbars=yes'); 
+          });
+        });
+      }
+    }
+  },
+
+
   // Update password
   updatePassword: {
     init: function () {
@@ -339,7 +363,7 @@ var app = {
             }
 
             // if (!form.checkValidity()) {
-              // e.preventDefault();
+            // e.preventDefault();
             // }
           })
         })
