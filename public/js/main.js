@@ -23,7 +23,10 @@
 
 // App namespace
 var app = {
-  closeAlert: {
+  /****************************************************************************
+   * Functions that will be loaded on all pages
+   ****************************************************************************/
+  common: {
     init: function () {
       var alertEl = document.querySelector('.alert');
 
@@ -38,124 +41,18 @@ var app = {
   },
 
 
-  // Add new option to new/existing poll
-  addPollOption: {
-    init: function () {
-      var addBtn = document.querySelector('.form__add-option');
-
-      if (addBtn) {
-        addBtn.addEventListener('click', function () {
-          var form = addBtn.parentNode.parentNode;
-          var optionNumber = form.querySelectorAll('.form__label').length + 1;
-          var newOption = app.addPollOption.createOptionEl('Option ' + optionNumber);
-
-          form.insertBefore(newOption, addBtn.parentNode);
-
-          var saveBtn = form.querySelector('.form__submit--disabled');
-          if (saveBtn) {
-            saveBtn.classList.remove('form__submit--disabled');
-            saveBtn.removeAttribute('disabled');
-          }
-        });
-      }
+  /****************************************************************************
+   * Consist of functions related to poll
+   ****************************************************************************/
+  poll: {
+    // Return all the polls' containers
+    polls: function () {
+      return [].slice.call(document.getElementsByClassName('card'));
     },
 
-    createOptionEl: function (labelText) {
-      var optionLabel = document.createElement('label'),
-        input = document.createElement('input');
 
-      optionLabel.className = 'form__label';
-      optionLabel.textContent = labelText;
-
-      input.className = 'form__input';
-      input.type = 'text';
-      input.name = 'option';
-      input.addEventListener('input', function () {
-        this.setCustomValidity('');
-      });
-
-      optionLabel.appendChild(input);
-
-      return optionLabel;
-    }
-  },
-
-
-  // Get the poll's votes data and draw chart to canvas
-  getPollChart: {
-    init: function () {
-      var cards = [].slice.call(document.getElementsByClassName('card'));
-
-      if (cards.length > 0) {
-        cards.forEach(function (card) {
-          var toggle = card.querySelector('.show-card-full');
-          var cardBody = card.querySelector('.card__body');
-          var poll = card.querySelector('span[data-poll-id]');
-
-          if (toggle) {
-            var pollId = poll.getAttribute('data-poll-id');
-
-            toggle.addEventListener('click', function () {
-              var votes = parseInt(card.querySelector('.poll-stat__votes').textContent);
-
-              if (votes > 0 && !card.querySelector('canvas')) {
-                var xhr = new XMLHttpRequest();
-
-                var canvasEl = document.createElement('canvas');
-                canvasEl.setAttribute('width', 300);
-                canvasEl.setAttribute('height', 180);
-                cardBody.appendChild(canvasEl);
-                if (cardBody.classList.contains('is-hidden')) {
-                  cardBody.classList.remove('is-hidden');
-                }
-
-                xhr.onreadystatechange = function () {
-                  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
-                    var chartData = app.getPollChart.parseChartData(JSON.parse(xhr.responseText));
-                    app.getPollChart.drawChartToCanvas(canvasEl, chartData);
-                  }
-                }
-
-                xhr.open('GET', '/poll/' + pollId, true);
-                xhr.setRequestHeader('Accept', 'application/json');
-                xhr.send(null);
-              }
-            });
-          }
-        });
-      }
-    },
-
-    drawChartToCanvas: function (canvas, data) {
-      var pollChart = new Chart(canvas, {
-        type: 'horizontalBar',
-        data: data
-      });
-    },
-
-    parseChartData: function (jsonData) {
-      var optionNames = jsonData.options.map(function (option) {
-        return option.option;
-      });
-
-      var optionValues = jsonData.options.map(function (option) {
-        return option.vote;
-      });
-
-      return {
-        labels: optionNames,
-        datasets: [{
-          label: 'Number of votes',
-          data: optionValues
-        }]
-      };
-    }
-  },
-
-
-  // Vote the poll
-  votePoll: {
-    init: function () {
+    // Vote poll
+    vote: function () {
       var voteBtn = document.querySelector('.form__submit');
 
       if (voteBtn) {
@@ -194,14 +91,80 @@ var app = {
           xhr.send('option=' + selectedOption + '&operation=vote');
         });
       }
-    }
-  },
+    },
 
 
-  // Edit poll
-  editPoll: {
-    init: function () {
-      var polls = [].slice.call(document.getElementsByClassName('card'));
+    // Display poll result by bar chart
+    showChart: function () {
+      var polls = app.poll.polls();
+
+      if (polls.length > 0) {
+        polls.forEach(function (poll) {
+          var toggle = poll.querySelector('.show-card-full');
+          var pollChart = poll.querySelector('.card__body');
+          var pollQuestion = poll.querySelector('.poll-question');
+
+          if (toggle) {
+            var pollId = pollQuestion.getAttribute('data-poll-id');
+
+            toggle.addEventListener('click', function () {
+              var votes = parseInt(poll.querySelector('.poll-stat__votes').textContent);
+
+              if (votes > 0 && !poll.querySelector('canvas')) {
+                var xhr = new XMLHttpRequest();
+                var canvasEl = document.createElement('canvas');
+
+                canvasEl.setAttribute('width', 300);
+                canvasEl.setAttribute('height', 180);
+                pollChart.appendChild(canvasEl);
+
+                if (pollChart.classList.contains('is-hidden')) {
+                  pollChart.classList.remove('is-hidden');
+                }
+
+                xhr.onreadystatechange = function () {
+                  if (xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200) {
+                    var chartData = app.poll.utils.parseChartData(JSON.parse(xhr.responseText));
+                    app.poll.utils.drawChartToCanvas(canvasEl, chartData);
+                  }
+                }
+
+                xhr.open('GET', '/poll/' + pollId, true);
+                xhr.setRequestHeader('Accept', 'application/json');
+                xhr.send(null);
+              }
+            });
+          }
+        });
+      }
+    },
+
+
+    // Add options when creating new poll or edit existing polls
+    addOption: function () {
+      var addBtn = document.querySelector('.form__add-option');
+
+      if (addBtn) {
+        addBtn.addEventListener('click', function () {
+          var form = addBtn.parentNode.parentNode;
+          var optionNumber = form.querySelectorAll('.form__label').length + 1;
+          var newOption = app.poll.utils.createNewOptionEl('Option ' + optionNumber);
+
+          form.insertBefore(newOption, addBtn.parentNode);
+
+          var saveBtn = form.querySelector('.form__submit--disabled');
+          if (saveBtn) {
+            saveBtn.classList.remove('form__submit--disabled');
+            saveBtn.removeAttribute('disabled');
+          }
+        });
+      }
+    },
+
+
+    // Edit existing polls
+    edit: function () {
+      var polls = app.poll.polls();
 
       if (polls.length > 0) {
         polls.forEach(function (poll) {
@@ -240,7 +203,7 @@ var app = {
                     var votedForm = poll.querySelector('.form');
 
                     inputEls.forEach(function (inputEl) {
-                      votedForm.appendChild(app.editPoll.createVotedOptionEl(inputEl.value));
+                      votedForm.appendChild(app.poll.utils.createVotedOptionEl(inputEl.value));
                       form.removeChild(inputEl.parentNode);
                     });
                   }
@@ -256,31 +219,10 @@ var app = {
       }
     },
 
-    createVotedOptionEl: function (option) {
-      var votedOptionEl = document.createElement('label');
-      votedOptionEl.className = 'form__label form__label--bordered';
 
-      var input = document.createElement('input');
-      input.type = 'radio';
-      input.className = 'form__radio';
-      input.name = 'option';
-      input.value = option;
-      input.disabled = true;
-
-      var text = document.createTextNode(option);
-
-      votedOptionEl.appendChild(input);
-      votedOptionEl.appendChild(text);
-
-      return votedOptionEl;
-    }
-  },
-
-
-  // Delete poll
-  deletePoll: {
-    init: function () {
-      var polls = [].slice.call(document.getElementsByClassName('card'));
+    // Delete existing poll
+    delete: function () {
+      var polls = app.poll.polls();
 
       if (polls.length > 0) {
         polls.forEach(function (poll) {
@@ -297,13 +239,12 @@ var app = {
           })
         });
       }
-    }
-  },
+    },
 
 
-  sharePoll: {
-    init: function () {
-      var polls = [].slice.call(document.getElementsByClassName('card'));
+    // Share poll via twitter
+    share: function () {
+      var polls = app.poll.polls();
 
       if (polls.length > 0) {
         polls.forEach(function (poll) {
@@ -315,75 +256,160 @@ var app = {
             var pollLink = window.location.href;
 
             var tweetContent = poll.querySelector('.poll-question').textContent;
-            var tweetLink = TWITTER_BASE_URL  + '?url=' + pollLink + '&text=' + tweetContent;
+            var tweetLink = TWITTER_BASE_URL + '?url=' + pollLink + '&text=' + encodeURIComponent(tweetContent);
 
-            window.open(tweetLink, 'VotingAppWindow', 'width=600,height=300,resizable=yes,scrollbars=yes'); 
+            window.open(tweetLink, 'VotingAppWindow', 'width=600,height=300,resizable=yes,scrollbars=yes');
           });
         });
+      }
+    },
+
+
+    // Utils
+    utils: {
+      drawChartToCanvas: function (canvas, data) {
+        var pollChart = new Chart(canvas, {
+          type: 'horizontalBar',
+          data: data
+        });
+      },
+
+
+      parseChartData: function (jsonData) {
+        var optionNames = jsonData.options.map(function (option) {
+          return option.option;
+        });
+
+        var optionValues = jsonData.options.map(function (option) {
+          return option.vote;
+        });
+
+        return {
+          labels: optionNames,
+          datasets: [{
+            label: 'Number of votes',
+            data: optionValues
+          }]
+        };
+      },
+
+
+      createNewOptionEl: function (labelText) {
+        var optionLabel = document.createElement('label'),
+          input = document.createElement('input');
+
+        optionLabel.className = 'form__label';
+        optionLabel.textContent = labelText;
+
+        input.className = 'form__input';
+        input.type = 'text';
+        input.name = 'option';
+        input.addEventListener('input', function () {
+          this.setCustomValidity('');
+        });
+
+        optionLabel.appendChild(input);
+
+        return optionLabel;
+      },
+
+
+      createVotedOptionEl: function (option) {
+        var votedOptionEl = document.createElement('label');
+        votedOptionEl.className = 'form__label form__label--bordered';
+
+        var input = document.createElement('input');
+        input.type = 'radio';
+        input.className = 'form__radio';
+        input.name = 'option';
+        input.value = option;
+        input.disabled = true;
+
+        var text = document.createTextNode(option);
+
+        votedOptionEl.appendChild(input);
+        votedOptionEl.appendChild(text);
+
+        return votedOptionEl;
       }
     }
   },
 
 
-  // Update password
-  updatePassword: {
-    init: function () {
-      var cards = [].slice.call(document.getElementsByClassName('card'));
+  /****************************************************************************
+   * Consist of functions related to user's actions
+   ****************************************************************************/
+  userAction: {
+    action: function () {
+      return document.querySelector('.card');
+    },
 
-      if (cards.length > 0) {
-        cards.forEach(function (card) {
-          var form = card.querySelector('.form');
-          var currentPasswordEl = card.querySelector('input[name="password"]'),
-            newPasswordEl = card.querySelector('input[name="newPassword"]');
 
-          var updateBtn = card.querySelector('input[type="submit"]');
+    updatePassword: function () {
+      var action = app.userAction.action();
 
-          currentPasswordEl.addEventListener('input', function () {
-            this.setCustomValidity('');
-          });
+      if (action) {
+        var form = action.querySelector('.form');
+        var currentPasswordEl = action.querySelector('input[name="password"]'),
+          newPasswordEl = action.querySelector('input[name="newPassword"]');
 
-          newPasswordEl.addEventListener('input', function () {
-            this.setCustomValidity('');
-          });
+        var updateBtn = action.querySelector('input[type="submit"]');
 
-          updateBtn.addEventListener('click', function (e) {
-            // Validate empty inputs
-            if (!currentPasswordEl.value) {
-              currentPasswordEl.setCustomValidity('Please enter your current password!');
-            } else {
-              currentPasswordEl.setCustomValidity('');
-            }
+        currentPasswordEl.addEventListener('input', function () {
+          this.setCustomValidity('');
+        });
 
-            if (!newPasswordEl.value) {
-              newPasswordEl.setCustomValidity('Please enter your new password!');
-            } else if (newPasswordEl.value === currentPasswordEl.value) {
-              newPasswordEl.setCustomValidity('New password must be different than current password!');
-            } else {
-              newPasswordEl.setCustomValidity('');
-            }
+        newPasswordEl.addEventListener('input', function () {
+          this.setCustomValidity('');
+        });
 
-            // if (!form.checkValidity()) {
-            // e.preventDefault();
-            // }
-          })
-        })
+        updateBtn.addEventListener('click', function (e) {
+          // Validate inputs
+          if (!currentPasswordEl.value) {
+            currentPasswordEl.setCustomValidity('Please enter your current password!');
+          } else {
+            currentPasswordEl.setCustomValidity('');
+          }
+
+          if (!newPasswordEl.value) {
+            newPasswordEl.setCustomValidity('Please enter your new password!');
+          } else if (newPasswordEl.value === currentPasswordEl.value) {
+            newPasswordEl.setCustomValidity('New password must be different than current password!');
+          } else {
+            newPasswordEl.setCustomValidity('');
+          }
+        });
       }
     }
   }
 };
 
 
+
 // Loader
 var LOADER = {
-  loadFunctions: function (namespace) {
-    var funcNames = document.body.getAttribute('data-page-funcs').split(/\s+/);
+  fire: function (namespace, pageName, funcName, args) {
+    var funcName = (funcName === undefined) ? 'init' : funcName;
 
+    if (pageName && namespace[pageName] && typeof namespace[pageName][funcName] === 'function') {
+      namespace[pageName][funcName](args);
+    }
+  },
+
+  load: function (namespace) {
+    var pageName = LOADER.util.camelCase(document.body.className);
+    var funcNames = document.body.getAttribute('data-page-funcs')
+      .split(/\s+/)
+      .map(function (funcName) {
+        return LOADER.util.camelCase(funcName);
+      });
+
+    // Load common functions
+    LOADER.fire(namespace, 'common');
+
+    // Then load main functions specific to current page
     funcNames.forEach(function (funcName) {
-      var func = LOADER.util.camelCase(funcName);
-
-      if (func && namespace[func] && namespace[func].init) {
-        namespace[func].init();
-      }
+      LOADER.fire(namespace, pageName, funcName);
     });
   },
 
@@ -397,5 +423,6 @@ var LOADER = {
 };
 
 
+
 // Load app's functions
-LOADER.loadFunctions(app);
+LOADER.load(app);

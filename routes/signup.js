@@ -8,7 +8,7 @@ const User = require('../model/user');
 const router = express.Router();
 
 router.get('/', (req, res) => {
-  res.render('signup', { title: 'Signup', pageFuncs: 'close-alert', message: req.flash('signupMsg') });
+  res.render('signup', { title: 'Signup', className: 'user-action', pageFuncs: 'signup', message: req.flash('signupMsg') });
 });
 
 

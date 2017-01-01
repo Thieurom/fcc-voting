@@ -12,7 +12,7 @@ router.get('/:user_id', (req, res, next) => {
       return next(err);
     }
 
-    res.render('index', { pageFuncs: 'get-poll-chart', polls: result });
+    res.render('index', { className: 'poll', pageFuncs: 'show-chart', polls: result });
   });
 });
 

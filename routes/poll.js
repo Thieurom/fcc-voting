@@ -17,7 +17,7 @@ router.get('/:poll_id', (req, res, next) => {
       if (req.xhr || req.accepts('html', 'json') === 'json') {
         return res.json(result);
       } else {
-        return res.render('poll', { pageFuncs: 'vote-poll share-poll', poll: result });
+        return res.render('poll', { className: 'poll', pageFuncs: 'vote share', poll: result });
       }
     }
   });

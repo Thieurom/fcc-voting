@@ -9,7 +9,7 @@ const User = require('../model/user');
 const router = express.Router();
 
 router.get('/', Auth.isLoggedIn, (req, res) => {
-  res.render('setting', { title: 'Settings', pageFuncs: 'close-alert update-password', message: req.flash('settingMsg') });
+  res.render('setting', { title: 'Settings', className: 'user-action', pageFuncs: 'update-password', message: req.flash('settingMsg') });
 });
 
 

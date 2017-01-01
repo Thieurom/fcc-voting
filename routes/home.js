@@ -12,7 +12,7 @@ router.get('/', (req, res, next) => {
       return next(err);
     }
 
-    res.render('index', { pageFuncs: 'get-poll-chart close-alert', message: req.flash('logoutMsg'), polls: result });
+    res.render('index', { className: 'poll', pageFuncs: 'show-chart', message: req.flash('logoutMsg'), polls: result });
   });
 });
 
