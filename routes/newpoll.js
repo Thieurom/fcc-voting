@@ -9,7 +9,7 @@ const router = express.Router();
 
 // Protected route
 router.get('/', Auth.isLoggedIn, (req, res) => {
-  res.render('newpoll', { title: 'New poll', className: 'poll', pageFuncs: 'add-option' });
+  res.render('newpoll', { title: 'New poll', className: 'poll', pageFuncs: 'add-option create' });
 });
 
 

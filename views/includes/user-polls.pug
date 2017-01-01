@@ -7,7 +7,7 @@ each poll in polls
     .card__body
       form.form
         each option in poll.options
-          label.form__label.form__label--bordered #[input(type='radio', name='option', value= option.option, disabled).form__radio]#{option.option}
+          label.form__label.form__label--bordered.form__label--disabled #[input(type='radio', name='option', value= option.option, disabled).form__radio]#{option.option}
       
     .card__footer
       form.form

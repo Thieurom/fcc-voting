@@ -7,12 +7,21 @@
  * -------------
  * The page at path `/poll/{pollId}` in which user can make a vote will be like as below:
  * 
- *  <body data-page-funcs="vote-poll">
+ *  <body class="poll" data-page-funcs="vote">
  *    ... markup ...
  *  </body>
  * 
- * Then when page is loaded, it loades along with function named `votePoll`.
- * Note that, the function names in body tag is hyphened, meanwhile the `real`
+ * Then when page is loaded, it loades along with app.poll.vote(),
+ * provided that `app` is a namespace.
+ * 
+ * Other example, when the page at path `/login` is loaded, it executes
+ * app.userAction.login():
+ * 
+ * <body class="user-action" data-paga-funcs="login">
+ *  ... markup ...
+ * </body>
+ * 
+ * Note that, the class name and function names in body tag is hyphened, meanwhile the `real`
  * function names that will be loaded is camelCase.
  * 
  * --------------
@@ -45,6 +54,32 @@ var app = {
    * Consist of functions related to poll
    ****************************************************************************/
   poll: {
+    init: function () {
+      var polls = app.poll.polls();
+
+      if (polls.length > 0) {
+        polls.forEach(function (poll) {
+          var inputEls = [].slice.call(poll.querySelectorAll('.form__input'));
+
+          if (inputEls.length > 0) {
+            inputEls.forEach(function (inputEl) {
+              if (inputEl.name === 'question') {
+                inputEl.addEventListener('input', function () {
+                  inputEl.setCustomValidity(app.validation.validatePollQuestion(inputEl));
+                });
+              } else if (inputEl.name === 'option') {
+                inputEl.addEventListener('input', function () {
+                  inputEl.setCustomValidity(app.validation.validatePollOption(inputEl));
+                });
+              }
+
+            });
+          }
+        });
+      }
+    },
+
+
     // Return all the polls' containers
     polls: function () {
       return [].slice.call(document.getElementsByClassName('card'));
@@ -53,15 +88,15 @@ var app = {
 
     // Vote poll
     vote: function () {
-      var voteBtn = document.querySelector('.form__submit');
+      var poll = app.poll.polls()[0];
 
-      if (voteBtn) {
-        var card = document.querySelector('.card');
-        var poll = card.querySelector('span[data-poll-id]');
-        var pollId = poll.getAttribute('data-poll-id');
+      if (poll) {
+        var pollQuestion = poll.querySelector('.poll-question');
+        var pollId = pollQuestion.getAttribute('data-poll-id');
+        var voteBtn = poll.querySelector('.form__submit');
+
+        var options = [].slice.call(poll.querySelectorAll('.form__radio'));
         var selectedOption = '';
-
-        var options = document.querySelectorAll('input[name="option"]');
 
         options.forEach(function (option) {
           option.addEventListener('click', function () {
@@ -72,23 +107,27 @@ var app = {
         voteBtn.addEventListener('click', function (e) {
           e.preventDefault();
 
-          var xhr = new XMLHttpRequest();
+          if (!selectedOption) {
+            window.alert('You must choose one option to vote!');
+          } else {
+            var xhr = new XMLHttpRequest();
 
-          xhr.onreadystatechange = function () {
-            if (xhr.readyState === XMLHttpRequest.DONE) {
-              if (xhr.status === 204) {
-                poll.textContent = 'You just voted successfully!';
-                var cardBody = card.querySelector('.card__body');
-                card.removeChild(cardBody);
-              } else {
-                window.alert('You can vote only once for each poll!');
+            xhr.onreadystatechange = function () {
+              if (xhr.readyState === XMLHttpRequest.DONE) {
+                if (xhr.status === 204) {
+                  poll.textContent = 'You just voted successfully!';
+                  var cardBody = card.querySelector('.card__body');
+                  card.removeChild(cardBody);
+                } else {
+                  window.alert('You can vote only once for each poll!');
+                }
               }
             }
-          }
 
-          xhr.open('PUT', '/poll/' + pollId, true);
-          xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
-          xhr.send('option=' + selectedOption + '&operation=vote');
+            xhr.open('PUT', '/poll/' + pollId, true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.send('option=' + selectedOption + '&operation=vote');
+          }
         });
       }
     },
@@ -162,6 +201,24 @@ var app = {
     },
 
 
+    // Create new poll
+    create: function () {
+      var polls = app.poll.polls();
+
+      if (polls.length > 0) {
+        var createBtn = polls[0].querySelector('.form__submit');
+
+        createBtn.addEventListener('click', function () {
+          var optionEls = [].slice.call(polls[0].querySelectorAll('.form__input'));
+
+          optionEls.forEach(function (optionEl) {
+            optionEl.setCustomValidity(app.validation.validatePollOption(optionEl));
+          });
+        });
+      }
+    },
+
+
     // Edit existing polls
     edit: function () {
       var polls = app.poll.polls();
@@ -177,11 +234,7 @@ var app = {
 
             if (inputEls.length > 0) {
               inputEls.forEach(function (inputEl) {
-                if (!inputEl.value) {
-                  inputEl.setCustomValidity('Please enter new option.');
-                } else {
-                  inputEl.setCustomValidity('');
-                }
+                inputEl.setCustomValidity(app.validation.validatePollOption(inputEl));
               });
             }
 
@@ -305,7 +358,7 @@ var app = {
         input.type = 'text';
         input.name = 'option';
         input.addEventListener('input', function () {
-          this.setCustomValidity('');
+          input.setCustomValidity(app.validation.validatePollOption(input));
         });
 
         optionLabel.appendChild(input);
@@ -340,45 +393,162 @@ var app = {
    * Consist of functions related to user's actions
    ****************************************************************************/
   userAction: {
+    init: function () {
+      var action = app.userAction.action();
+
+      if (action) {
+        var inputEls = [].slice.call(action.querySelectorAll('.form__input'));
+
+        if (inputEls.length > 0) {
+          inputEls.forEach(function (inputEl) {
+            inputEl.addEventListener('input', function () {
+              if (inputEl.name === 'username') {
+                inputEl.setCustomValidity(app.validation.validateUsername(inputEl));
+              } else if (inputEl.name === 'password') {
+                inputEl.setCustomValidity(app.validation.validatePassword(inputEl));
+              } else if (inputEl.name === 'newPassword') {
+                inputEl.setCustomValidity(app.validation.validateNewPassword(inputEl));
+              }
+            });
+          });
+        }
+      }
+    },
+
+
     action: function () {
       return document.querySelector('.card');
     },
 
 
+    // Validate signup
+    signup: function () {
+      var action = app.userAction.action();
+
+      if (action) {
+        var usernameEl = action.querySelector('input[name="username"]'),
+          passwordEl = action.querySelector('input[name="password"]');
+        var signupBtn = action.querySelector('.form__submit');
+
+        signupBtn.addEventListener('click', function () {
+          usernameEl.setCustomValidity(app.validation.validateUsername(usernameEl));
+          passwordEl.setCustomValidity(app.validation.validatePassword(passwordEl));
+        });
+      }
+    },
+
+
+    // Validate login
+    login: function () {
+      var action = app.userAction.action();
+
+      if (action) {
+        var usernameEl = action.querySelector('input[name="username"]'),
+          passwordEl = action.querySelector('input[name="password"]');
+        var loginBtn = action.querySelector('.form__submit');
+
+        loginBtn.addEventListener('click', function () {
+          usernameEl.setCustomValidity(app.validation.validateUsername(usernameEl));
+          passwordEl.setCustomValidity(app.validation.validatePassword(passwordEl));
+        });
+      }
+    },
+
+
+    // Change password
     updatePassword: function () {
       var action = app.userAction.action();
 
       if (action) {
-        var form = action.querySelector('.form');
         var currentPasswordEl = action.querySelector('input[name="password"]'),
           newPasswordEl = action.querySelector('input[name="newPassword"]');
 
-        var updateBtn = action.querySelector('input[type="submit"]');
+        var updateBtn = action.querySelector('.form__submit');
 
-        currentPasswordEl.addEventListener('input', function () {
-          this.setCustomValidity('');
+        updateBtn.addEventListener('click', function () {
+          app.validation.validateChangePassword(currentPasswordEl, newPasswordEl);
         });
+      }
+    }
+  },
 
-        newPasswordEl.addEventListener('input', function () {
-          this.setCustomValidity('');
-        });
 
-        updateBtn.addEventListener('click', function (e) {
-          // Validate inputs
-          if (!currentPasswordEl.value) {
-            currentPasswordEl.setCustomValidity('Please enter your current password!');
-          } else {
-            currentPasswordEl.setCustomValidity('');
-          }
+  /****************************************************************************
+   * Consist of functions related to form validation
+   ****************************************************************************/
+  validation: {
+    validatePollQuestion: function (input) {
+      var errorValidationMsg = '';
 
-          if (!newPasswordEl.value) {
-            newPasswordEl.setCustomValidity('Please enter your new password!');
-          } else if (newPasswordEl.value === currentPasswordEl.value) {
-            newPasswordEl.setCustomValidity('New password must be different than current password!');
-          } else {
-            newPasswordEl.setCustomValidity('');
-          }
-        });
+      if (!input.value) {
+        errorValidationMsg = 'Poll question can\'t be left blank!';
+      }
+
+      return errorValidationMsg;
+    },
+
+
+    validatePollOption: function (input) {
+      var errorValidationMsg = '';
+
+      if (!input.value) {
+        errorValidationMsg = 'Poll option can\'t be left blank!';
+      }
+
+      return errorValidationMsg;
+    },
+
+
+    validateUsername: function (input) {
+      var errorValidationMsg = '';
+
+      if (!input.value) {
+        errorValidationMsg = 'Please enter your username!';
+      } else if ((/\s/).test(input.value)) {
+        errorValidationMsg = 'Username can\'t contain space(s)!';
+      }
+
+      return errorValidationMsg;
+    },
+
+
+    validatePassword: function (input) {
+      var errorValidationMsg = '';
+
+      if (!input.value) {
+        errorValidationMsg = 'Please enter your password!';
+      } else if ((/\s/).test(input.value)) {
+        errorValidationMsg = 'Password can\'t contain space(s)!';
+      }
+
+      return errorValidationMsg;
+    },
+
+
+    validateNewPassword: function (input) {
+      var errorValidationMsg = '';
+
+      if (!input.value) {
+        errorValidationMsg = 'Please enter your new password!';
+      } else if ((/\s/).test(input.value)) {
+        errorValidationMsg = 'Password can\'t contain space(s)!';
+      }
+
+      return errorValidationMsg;
+    },
+
+
+    validateChangePassword: function (oldPassword, newPassword) {
+      if (!oldPassword.value) {
+        oldPassword.setCustomValidity('Please enter your password!');
+      } else if ((/\s/).test(oldPassword.value)) {
+        oldPassword.setCustomValidity('Password can\'t contain space(s)!');
+      } else if (!newPassword.value) {
+        newPassword.setCustomValidity('Please enter your new password!');
+      } else if ((/\s/).test(newPassword.value)) {
+        newPassword.setCustomValidity('Password can\'t contain space(s)!');
+      } else if (oldPassword.value === newPassword.value) {
+        newPassword.setCustomValidity('New password must be different than currrent password!');
       }
     }
   }
@@ -409,6 +579,7 @@ var LOADER = {
 
     // Then load main functions specific to current page
     funcNames.forEach(function (funcName) {
+      LOADER.fire(namespace, pageName);
       LOADER.fire(namespace, pageName, funcName);
     });
   },
