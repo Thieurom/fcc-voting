@@ -115,9 +115,8 @@ var app = {
             xhr.onreadystatechange = function () {
               if (xhr.readyState === XMLHttpRequest.DONE) {
                 if (xhr.status === 204) {
-                  poll.textContent = 'You just voted successfully!';
-                  var cardBody = card.querySelector('.card__body');
-                  card.removeChild(cardBody);
+                  pollQuestion.textContent = 'You just voted successfully!';
+                  poll.removeChild(poll.querySelector('.card__body'));
                 } else {
                   window.alert('You can vote only once for each poll!');
                 }
@@ -174,6 +173,23 @@ var app = {
               }
             });
           }
+        });
+      }
+    },
+
+
+    // Display editor for editing existing polls
+    showEditor: function () {
+      var polls = app.poll.polls();
+
+      if (polls.length > 0) {
+        polls.forEach(function (poll) {
+          var toggle = poll.querySelector('.show-card-full');
+
+          toggle.addEventListener('click', function () {
+            poll.querySelector('.card__body').classList.remove('is-hidden');
+            poll.querySelector('.card__footer').classList.remove('is-hidden');
+          });
         });
       }
     },
@@ -393,7 +409,7 @@ var app = {
 
       createVotedOptionEl: function (option) {
         var votedOptionEl = document.createElement('label');
-        votedOptionEl.className = 'form__label form__label--bordered';
+        votedOptionEl.className = 'form__label form__label--bordered form__label--disabled';
 
         var input = document.createElement('input');
         input.type = 'radio';
@@ -504,8 +520,8 @@ var app = {
     validatePollQuestion: function (input) {
       var errorValidationMsg = '';
 
-      if (!input.value) {
-        errorValidationMsg = 'Poll question can\'t be left blank!';
+      if (!input.value || !input.value.trim()) {
+        errorValidationMsg = 'Poll question can\'t be empty!';
       }
 
       return errorValidationMsg;
@@ -515,8 +531,8 @@ var app = {
     validatePollOption: function (input) {
       var errorValidationMsg = '';
 
-      if (!input.value) {
-        errorValidationMsg = 'Poll option can\'t be left blank!';
+      if (!input.value || !input.value.trim()) {
+        errorValidationMsg = 'Poll option can\'t be empty!';
       }
 
       return errorValidationMsg;

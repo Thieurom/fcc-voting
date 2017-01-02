@@ -27,6 +27,7 @@ router.post('/', (req, res, next) => {
       res.redirect('signup');
     } else {
       console.log('New user inserted to database!');
+      req.flash('loginMsg', 'Congratulations! Now you can login and create poll!');
       res.redirect('login');
     }
   })

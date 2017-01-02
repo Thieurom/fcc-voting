@@ -42,10 +42,11 @@ router.put('/:poll_id', (req, res, next) => {
 
   if (operation === 'vote') {
     // Handle the voting poll operation
+    let voter = '';
     const votedOption = req.body.option;
 
     if (req.isAuthenticated()) {
-      const voter = req.user.username;
+      voter = req.user.username;
       Poll.voteByRegisteredUser(voter, pollId, votedOption, updateHandler);
     } else {
       voter = req.headers['x-forwarded-for'];

@@ -14,7 +14,7 @@ router.get('/', Auth.isLoggedIn, (req, res, next) => {
       return next(err);
     }
 
-    res.render('profile', { title: 'Profile', className: 'poll', pageFuncs: 'add-option delete edit', polls: result });
+    res.render('profile', { title: 'Profile', className: 'poll', pageFuncs: 'show-editor add-option delete edit', polls: result });
   })
 });
 

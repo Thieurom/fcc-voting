@@ -4,6 +4,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 const flash = require('connect-flash');
 const path = require('path');
 const passport = require('./config/passport');
@@ -11,6 +12,7 @@ const passport = require('./config/passport');
 
 const PORT = process.env.PORT || 3000;
 const DATABASE = process.env.MONGOLAB_URI || 'mongodb://localhost:27017/data-dev';
+const COOKIE_SECRET = process.env.COOKIE_SECRET || 'cookie_secret';
 
 // App instance
 const app = express();
@@ -24,12 +26,13 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(flash());
 app.use(session({
-  secret: 'secret',
+  secret: COOKIE_SECRET,
   resave: false,
   saveUninitialized: false,
   cookie: {
     // secure: false,
-    maxAge: 4*60*60*1000  // 4 hours
+    maxAge: 4 * 60 * 60 * 1000,  // 4 hours
+    store: new MongoStore({ url: DATABASE })
   }
 }));
 app.use(passport.initialize());
@@ -65,7 +68,11 @@ app.use((err, req, res, next) => {
 
 app.use((err, req, res, next) => {
   res.status(err.status || 500);
-  res.render('error', { error: err.message });
+  if (err.status === 500) {
+    res.render('error', { error: 'Internal Server Error' });
+  } else {
+    res.render('error', { error: err.message });
+  }
 });
 
 // Connect to the database before establish server

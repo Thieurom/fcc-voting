@@ -24,8 +24,9 @@ router.post('/', Auth.isLoggedIn, (req, res, next) => {
     }
 
     if (!same) {
-      req.flash('settingMsg', 'Incorrect current password!');
-      return res.redirect('/settings');
+      req.flash('homeMsg', 'Incorrect current password! Login and try again!');
+      req.logout();
+      return res.redirect('/');
     }
 
     Utils.makePasswordHash(newPassword, (err, hash) => {
@@ -39,6 +40,7 @@ router.post('/', Auth.isLoggedIn, (req, res, next) => {
         }
 
         req.flash('loginMsg', 'You\'ve updated your password. Please login with new one!');
+        req.logout();
         res.redirect('/login');
       })
     })

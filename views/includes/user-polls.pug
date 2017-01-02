@@ -4,12 +4,12 @@ each poll in polls
       h2.h2
         span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[span.fontawesome-edit.font-icon.font-icon--small]
 
-    .card__body
+    .card__body.is-hidden
       form.form
         each option in poll.options
           label.form__label.form__label--bordered.form__label--disabled #[input(type='radio', name='option', value= option.option, disabled).form__radio]#{option.option}
       
-    .card__footer
+    .card__footer.is-hidden
       form.form
         div
           span.form__add-option More options (+)

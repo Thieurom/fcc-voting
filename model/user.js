@@ -7,7 +7,7 @@ const bcrypt = require('bcrypt');
 
 // Create new user into database
 exports.register = (username, password, done) => {
-  const collection = db.get().collection('users');
+  const collection = db.get().collection('va-users');
 
   bcrypt.hash(password, 10, (err, hash) => {
     if (err) {
@@ -37,7 +37,7 @@ exports.register = (username, password, done) => {
 
 // Get user by id
 exports.getById = (id, done) => {
-  const collection = db.get().collection('users');
+  const collection = db.get().collection('va-users');
 
   collection.findOne({ _id: new ObjectID(id) }, (err, user) => {
     done(err, user);
@@ -47,7 +47,7 @@ exports.getById = (id, done) => {
 
 // Get user by username
 exports.getByName = (name, done) => {
-  const collection = db.get().collection('users');
+  const collection = db.get().collection('va-users');
 
   collection.findOne({ username: name }, (err, user) => {
     done(err, user);
@@ -57,7 +57,7 @@ exports.getByName = (name, done) => {
 
 // Change password
 exports.saveNewPassword = (user, passwordHash, done) => {
-  const collection = db.get().collection('users');
+  const collection = db.get().collection('va-users');
 
   collection.updateOne({ _id: user._id }, { $set: { passwordHash: passwordHash } }, (err, result) => {
     done(err, result.modifiedCount);
