@@ -321,9 +321,33 @@ var app = {
     // Utils
     utils: {
       drawChartToCanvas: function (canvas, data) {
+        var chartOptions = {
+          scales: {
+            yAxes: [{
+              ticks: {
+                fontFamily: "'Roboto', 'Helvetica', sans-serif"
+              }
+            }],
+            xAxes: [{
+              ticks: {
+                min: 0,
+                fixedStepSize: 1,
+              }
+            }]
+          },
+          legend: {
+            display: true,
+            labels: {
+              fontFamily: "'Roboto', 'Helvetica', sans-serif",
+              fontSize: 13
+            }
+          }
+        };
+
         var pollChart = new Chart(canvas, {
           type: 'horizontalBar',
-          data: data
+          data: data,
+          options: chartOptions
         });
       },
 
@@ -340,7 +364,7 @@ var app = {
         return {
           labels: optionNames,
           datasets: [{
-            label: 'Number of votes',
+            label: 'Votes',
             data: optionValues
           }]
         };
