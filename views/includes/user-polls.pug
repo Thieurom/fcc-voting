@@ -2,7 +2,7 @@ each poll in polls
   .card
     .card__title
       h2.h2
-        span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[span.fontawesome-edit.font-icon.font-icon--small]
+        span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[span.fa.fa-edit.font-icon.font-icon--small]
 
     .card__body.is-hidden
       form.form
@@ -15,4 +15,4 @@ each poll in polls
           span.form__add-option More options (+)
 
         input.form__submit.form__submit--disabled(type='submit', value='Save', disabled)
-        button.form__submit.form__submit--secondary(type='button') #[span.fontawesome-remove-circle.font-icon] Delete
+        button.form__submit.form__submit--secondary(type='button') #[span.fa.fa-trash.font-icon] #[span Delete]

@@ -3,7 +3,7 @@ each poll in polls
     .card__title
       h2.h2
         if (poll.voters.registeredUser.length + poll.voters.anonymous.length)
-          span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[span.fontawesome-bar-chart.font-icon.font-icon--small]
+          span(data-poll-id= poll._id.toString()).poll-question.show-card-full #{poll.question} #[i.fa.fa-line-chart.font-icon.font-icon--small]
         else
           span(data-poll-id= poll._id.toString()).poll-question #{poll.question}
 
@@ -12,7 +12,7 @@ each poll in polls
     .card__footer
       .poll-stat.clearfix
         span.on-left
-          a(href= '/user/' + poll.creator) #[span.fontawesome-user.font-icon] #[span.poll-stat__author= poll.creator]
+          a(href= '/user/' + poll.creator) #[span.fa.fa-user.font-icon] #[span.poll-stat__author= poll.creator]
 
         span.on-right
-          a(href= '/poll/' + poll._id) #[span.fontawesome-check.font-icon] #[span.poll-stat__votes= poll.voters.registeredUser.length + poll.voters.anonymous.length]
+          a(href= '/poll/' + poll._id) #[span.fa.fa-check-square-o.font-icon] #[span.poll-stat__votes= poll.voters.registeredUser.length + poll.voters.anonymous.length]

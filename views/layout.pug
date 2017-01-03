@@ -11,6 +11,7 @@ html(lang='en')
     else
       title= 'Voting App'
     link(rel='stylesheet', href='https://fonts.googleapis.com/css?family=Roboto:300,400,500')
+    link(rel='stylesheet', href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css')
     link(rel='stylesheet', href='/css/styles.css')
 
   body(class=className, data-page-funcs=pageFuncs)
@@ -21,13 +22,13 @@ html(lang='en')
           
           .nav-bar
             if (user)
-              .nav-bar__dropdown= user.username
+              .nav-bar__dropdown #[span= user.username] #[i.fa.fa-caret-down]
                 ul.dropdown
                   li.dropdown__item #[a(href='/profile') Profile]
                   li.dropdown__item #[a(href='/settings') Settings]
                   li.dropdown__item #[a(href='/logout') Log out]
                   
-              a.nav-bar__link(href='/newpoll') #[span.fontawesome-plus.font-icon]
+              a.nav-bar__link(href='/newpoll') #[i.fa.fa-plus.font-icon] #[span Poll]
 
             else
               a.nav-bar__link(href='/login') Log in
@@ -37,7 +38,7 @@ html(lang='en')
       main.main
         .main__wrapper
           if (message && message.length > 0)
-            .alert #{message} #[button.alert__close(type='button') #[span.fontawesome-remove.font-icon]]
+            .alert #{message} #[button.alert__close(type='button') #[i.fa.fa-close.font-icon]]
 
           block main_content
 
