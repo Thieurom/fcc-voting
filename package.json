@@ -4,11 +4,12 @@
   "description": "Voting App",
   "main": "index.js",
   "scripts": {
-    "start": "nodemon src/server.js --exec babel-node"
+    "start": "nodemon src/server.js --exec babel-node "
   },
   "babel": {
     "presets": [
-      "env"
+      "env",
+      "react"
     ]
   },
   "repository": {
@@ -23,11 +24,15 @@
   "homepage": "https://github.com/Thieurom/fcc-voting#readme",
   "dependencies": {
     "express": "^4.15.3",
-    "morgan": "^1.8.2"
+    "morgan": "^1.8.2",
+    "pug": "^2.0.0-rc.2",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
     "nodemon": "^1.11.0"
   },
   "engines": {
