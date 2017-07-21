@@ -5,6 +5,7 @@ import {
     Link
 } from 'react-router-dom';
 import Header from './Header';
+import Footer from './Footer';
 import Home from './Home';
 import Login from './Login';
 import Signup from './Signup';
@@ -16,7 +17,6 @@ class App extends Component {
             <Router>
                 <div>
                     <Header />
-
                     <main className='main'>
                         <div className='main__inner'>
                             <Route exact path='/' component={Home} />
@@ -24,6 +24,7 @@ class App extends Component {
                             <Route path='/signup' component={Signup} />
                         </div>
                     </main>
+                    <Footer />
                 </div>
             </Router>
         );
