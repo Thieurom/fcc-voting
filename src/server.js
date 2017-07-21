@@ -2,9 +2,8 @@ import express from 'express';
 import morgan from 'morgan';
 import path from 'path';
 import React from 'react';
-import ReactDOMServer from 'react-dom/server';
 
-import App from './views/components/App';
+import App from './components/App';
 
 
 const app = express();
@@ -12,15 +11,11 @@ const app = express();
 app.use(morgan('dev'));
 
 // Server settings
-app.use(express.static(path.join(__dirname, 'assets')));
-app.set('views', path.join(__dirname, 'views/layouts'));
-app.set('view engine', 'pug');
+app.use('assets', express.static(path.join(__dirname, './assets')));
 
 
 app.get('/', (req, res) => {
-    const title = 'Votee! Another voting app';
-    const content = ReactDOMServer.renderToString(<App />);
-    res.render('index', {title, content});
+    res.sendFile(path.join(__dirname, 'templates/index.html'));
 });
 
 app.listen(3000, () => {

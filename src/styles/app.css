@@ -27,6 +27,26 @@ a {
   text-transform: uppercase;
 }
 
+.nav {
+  margin-left: auto;
+}
+
+.nav__link {
+  display: inline-block;
+  height: 50px;
+  padding-left: 20px;
+  padding-right: 20px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  line-height: 50px;
+  transition: background-color 200ms;
+  cursor: pointer;
+}
+.nav__link:hover {
+  background-color: #e8e8e8;
+}
+
+
 .header {
   position: fixed;
   top: 0;
@@ -37,12 +57,22 @@ a {
   background-color: #fff;
   color: #4a4a4a;
 }
-
 .header__inner {
   display: flex;
   align-items: center;
   width: 90%;
   max-width: 768px;
   height: 50px;
+  margin: 0 auto;
+}
+
+.main {
+  min-height: calc(100vh - 200px);
+  padding-top: 100px;
+  padding-bottom: 50px;
+}
+.main__inner {
+  width: 90%;
+  max-width: 500px;
   margin: 0 auto;
 }
