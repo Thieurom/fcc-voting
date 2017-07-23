@@ -26,8 +26,15 @@
   "homepage": "https://github.com/Thieurom/fcc-voting#readme",
   "dependencies": {
     "axios": "^0.16.2",
+    "body-parser": "^1.17.2",
+    "connect-mongo": "^1.3.2",
     "express": "^4.15.3",
+    "express-session": "^1.15.4",
+    "mongoose": "^4.11.3",
     "morgan": "^1.8.2",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "passport-local-mongoose": "^4.0.0",
     "react": "^15.6.1",
     "react-dom": "^15.6.1",
     "react-router-dom": "^4.1.2"
