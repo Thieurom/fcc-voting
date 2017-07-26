@@ -14,7 +14,7 @@ class SignUp extends Component {
         this.handleCompletion = this.handleCompletion.bind(this);
     }
 
-    handleCompletion() {
+    handleCompletion(response) {
         this.setState({
             completed: true
         });
@@ -31,7 +31,7 @@ class SignUp extends Component {
                     <h2 className='h2'>Create new account</h2>
                 </div>
                 <div className='panel__body'>
-                    <Form onCompletion={this.handleCompletion} />
+                    <Form action='/api/users' onCompletion={this.handleCompletion} />
                 </div>
             </div>
         );

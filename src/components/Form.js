@@ -1,42 +1,41 @@
 import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
+import UserInput from './UserInput';
 
 
-export default class Form extends Component {
+class Form extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
-            username: '',
-            password: '',
+            credentials: {
+                username: '',
+                password: '',
+            },
             error: null
         };
 
+        this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
     }
 
-    handleChange(e, input) {
-        const value = e.target.value;
-        let newState = {};
+    handleChange(event) {
+        let credentials = this.state.credentials;
 
-        if (input === 'username') {
-            newState.username = value;
-        } else if (input === 'password') {
-            newState.password = value;
-        }
-
-        this.setState(newState);
+        credentials[event.target.name] = event.target.value;
+        this.setState({ credentials });
     }
 
-    handleSubmit(e) {
-        e.preventDefault();
+    handleSubmit(event) {
+        event.preventDefault();
 
-        const { username, password } = this.state;
+        const url = this.props.action;
 
-        axios.post('/api/users', { username, password })
+        axios.post(url, this.state.credentials)
             .then(response => {
-                this.props.onCompletion();
+                this.props.onCompletion(response.data);
             })
             .catch(error => {
                 const message = error.response.data.error;
@@ -49,32 +48,39 @@ export default class Form extends Component {
 
     render() {
         return (
-            <form method='POST' action='api/users' className='form'
+            <form method='POST' action={this.props.action} className='form'
                   onSubmit={this.handleSubmit} >
 
-                <label htmlFor='username' className='form__label'>Username</label>
-                <input type='text' name='username' autoFocus='true'
-                       id='username'
-                       className='form__input'
-                       value={this.state.username}
-                       onChange={(e) => {
-                           this.handleChange(e, 'username');
-                       }} />
-
-                <label htmlFor='password' className='form__label'>Password</label>
-                <input type='password' name='password' className='form__input'
-                       id='password'
-                       value={this.state.password}
-                       onChange={(e) => {
-                           this.handleChange(e, 'password');
-                       }} />
+                  <UserInput label='Username'
+                      name='username'
+                      value={this.state.credentials.username}
+                      onChange={this.handleChange} />
+                  
+                  <UserInput label='Password'
+                      type='password'
+                      name='password'
+                      value={this.state.credentials.password}
+                      onChange={this.handleChange} />
                    
                 {this.state.error &&
                     <div className='form__error'>{this.state.error}</div>
                 }
 
-                <input type='submit' value='Submit' className='form__submit' />
+                <input type='submit' value={this.props.submit} className='form__submit' />
             </form>
         );
     }
 }
+
+Form.defaultProps = {
+    submit: 'Submit'
+};
+
+Form.propTypes = {
+    action: PropTypes.string.isRequired,
+    submit: PropTypes.string,
+    onCompletion: PropTypes.func.isRequired
+};
+
+
+export default Form;

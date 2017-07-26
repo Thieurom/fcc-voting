@@ -3,13 +3,12 @@ import morgan from 'morgan';
 import path from 'path';
 import mongoose from 'mongoose';
 import bodyParser from 'body-parser';
-import session from 'express-session';
-import connectMongo from 'connect-mongo';
 import passport from 'passport';
 import { Strategy as LocalStrategy } from 'passport-local';
 import User from './models/user';
 import usersApi from './api/users';
 import pollsApi from './api/polls';
+import Auth from './auth';
 
 
 const PORT = process.env.PORT || 3000;
@@ -31,25 +30,14 @@ db.once('open', () => {
 
 // Web-server
 const app = express();
-const MongoStore = connectMongo(session);
 
 app.use('assets', express.static(path.join(__dirname, './assets')));
 app.use(bodyParser.json());
-app.use(session({
-    secret: SECRET,
-    resave: false,
-    saveUninitialized: false,
-    cookie: {
-        maxAge: 4 * 60 * 1000,  // 4 hours
-        store: new MongoStore({ url: DATABASE })
-    }
-}));
 app.use(morgan('dev'));
 
 
 // Config passport
 app.use(passport.initialize());
-app.use(passport.session());
 passport.use(new LocalStrategy(User.authenticate()));
 passport.serializeUser(User.serializeUser());
 passport.deserializeUser(User.deserializeUser());
@@ -58,6 +46,7 @@ passport.deserializeUser(User.deserializeUser());
 // Server's routes
 app.use('/api/polls', pollsApi);
 app.use('/api/users', usersApi);
+app.use('/login', Auth.login);
 app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'templates/index.html'));
 });
