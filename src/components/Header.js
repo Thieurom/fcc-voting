@@ -21,7 +21,7 @@ function Header({ isAuthenticated }) {
                                 </li>
                             </ul>
                         </div>
-                        <Link to='/polls/new' className='nav__link'><i className='fa fa-edit' style={{fontSize: '20px'}}></i></Link>
+                        <Link to='/new' className='nav__link'><i className='fa fa-edit' style={{fontSize: '20px'}}></i></Link>
                     </nav>
                 ) : (
                     <nav className='nav'>

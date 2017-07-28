@@ -5,11 +5,12 @@ import {
     Link
 } from 'react-router-dom';
 import Header from './Header';
-import Cookies from 'js-cookie';
 import Footer from './Footer';
 import Home from './Home';
 import LogIn from './LogIn';
 import SignUp from './SignUp';
+import PollCreation from './PollCreation';
+import TokenStore from '../utils/tokenStore';
 
 
 class App extends Component {
@@ -25,12 +26,12 @@ class App extends Component {
     }
 
     authenticateUser(token) {
-        Cookies.set('auth_token', token);
+        TokenStore.store(token);
         this.setState({ isAuthenticated: true });
     }
 
     isAuthenticated() {
-        if (Cookies.get('auth_token')) {
+        if (TokenStore.get()) {
             return true;
         }
         return false;
@@ -48,6 +49,9 @@ class App extends Component {
                                 <LogIn isAuthenticated={this.state.isAuthenticated} afterLogin={this.authenticateUser} />
                             )} />
                             <Route path='/signup' component={SignUp} />
+                            <Route path='/new' render={() => (
+                                <PollCreation isAuthenticated={this.state.isAuthenticated} />
+                            )} />
                         </div>
                     </main>
                     <Footer />

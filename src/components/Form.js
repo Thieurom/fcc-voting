@@ -38,11 +38,13 @@ class Form extends Component {
                 this.props.onCompletion(response.data);
             })
             .catch(error => {
-                const message = error.response.data.error;
+                if (error.response) {
+                    const message = error.response.data.error;
 
-                this.setState({
-                    error: message
-                });
+                    this.setState({
+                        error: message
+                    });
+                }
             });
     }
 

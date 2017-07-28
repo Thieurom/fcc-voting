@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import Cookie from 'js-cookie';
+import PropTypes from 'prop-types';
 import Form from './Form';
 
 
@@ -39,6 +39,15 @@ class LogIn extends Component {
         );
     }
 }
+
+LogIn.propTypes = {
+    isAuthenticated: PropTypes.bool,
+    afterLogin: PropTypes.func.isRequired
+};
+
+LogIn.defaultProps = {
+    isAuthenticated: false
+};
 
 
 export default LogIn;

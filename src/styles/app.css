@@ -149,6 +149,13 @@ a {
   outline: 0;
 }
 
+.form__link {
+  font-size: 0.875rem;
+  font-weight: 400;
+  color: #2DB84D;
+  cursor: pointer;
+}
+
 
 .form__error {
   font-size: 0.875rem;

@@ -16,13 +16,15 @@ const Auth = {
                 error.status = 401;
                 return next(error);
             }
+
             req.login(user, (err) => {
                 if (err) return next(err);
 
                 const payload = {
                     userId: user._id
                 };
-                const token = jwt.sign(payload, SECRET, {expiresIn: 3600});
+                const token = jwt.sign(payload, SECRET);
+
                 return res.status(200).json({
                     status: 'Login Successful.',
                     success: true,
@@ -56,6 +58,8 @@ const Auth = {
                         if (!user) {
                             return res.status(401).end();
                         }
+
+                        req.userId = userId;
                         next();
                     });
                 }

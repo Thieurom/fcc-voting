@@ -7,7 +7,7 @@ function UserInput(props) {
     
     return (
         <div>
-            <label htmlFor={name} className='form__label'>{label}</label>
+            {label && <label htmlFor={name} className='form__label'>{label}</label>}
             <input type={type}
                    id={name}
                    name={name}
@@ -19,11 +19,12 @@ function UserInput(props) {
 }
 
 UserInput.propTypes = {
-    label: PropTypes.string.isRequired,
+    label: PropTypes.string,
     name: PropTypes.string.isRequired,
     onChange: PropTypes.func.isRequired,
     type: PropTypes.string,
-    value: PropTypes.string
+    value: PropTypes.string,
+    placeholder: PropTypes.string
 };
 
 UserInput.defaultProps = {

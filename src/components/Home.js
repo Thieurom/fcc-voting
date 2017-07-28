@@ -33,7 +33,7 @@ class Home extends Component {
     render() {
         const polls = this.state.polls;
         const listPolls = polls.map(poll =>
-            <Poll key={poll.id} poll={poll} />
+            <Poll key={poll._id} poll={poll} />
         ); 
 
         return (
