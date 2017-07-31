@@ -4,7 +4,7 @@ import PropTypes from 'prop-types';
 
 function UserInput(props) {
     const { label, name, type, onChange, value } = props;
-    
+
     return (
         <div>
             {label && <label htmlFor={name} className='form__label'>{label}</label>}

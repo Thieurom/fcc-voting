@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Form from './Form';
+import UserForm from './UserForm';
 
 
 class LogIn extends Component {
@@ -33,7 +33,7 @@ class LogIn extends Component {
                     <h2 className='h2'>Login</h2>
                 </div>
                 <div className='panel__body'>
-                    <Form action='/login' submit='Log in' onCompletion={this.handleCompletion} />
+                    <UserForm action='/login' submit='Log in' onCompletion={this.handleCompletion} />
                 </div>
             </div>
         );

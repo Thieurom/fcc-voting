@@ -3,9 +3,10 @@ import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
 import UserInput from './UserInput';
+import Button from './Button';
 
 
-class Form extends Component {
+class UserForm extends Component {
     constructor(props) {
         super(props);
 
@@ -57,32 +58,32 @@ class Form extends Component {
                       name='username'
                       value={this.state.credentials.username}
                       onChange={this.handleChange} />
-                  
+
                   <UserInput label='Password'
                       type='password'
                       name='password'
                       value={this.state.credentials.password}
                       onChange={this.handleChange} />
-                   
+
                 {this.state.error &&
                     <div className='form__error'>{this.state.error}</div>
                 }
 
-                <input type='submit' value={this.props.submit} className='form__submit' />
+                <Button type='submit' className='form__submit'>{this.props.submit}</Button>
             </form>
         );
     }
 }
 
-Form.defaultProps = {
+UserForm.defaultProps = {
     submit: 'Submit'
 };
 
-Form.propTypes = {
+UserForm.propTypes = {
     action: PropTypes.string.isRequired,
     submit: PropTypes.string,
     onCompletion: PropTypes.func.isRequired
 };
 
 
-export default Form;
+export default UserForm;

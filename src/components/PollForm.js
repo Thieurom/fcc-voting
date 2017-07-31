@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
 import UserInput from './UserInput';
+import Button from './Button';
 import TokenStore from '../utils/tokenStore';
 
 
@@ -67,7 +68,7 @@ class PollForm extends Component {
     }
 
     render() {
-        const options = this.state.poll.options.map((option, index) => 
+        const options = this.state.poll.options.map((option, index) =>
             <UserInput key={'option_' + (index + 1)}
                 label={'Option ' + (index + 1)}
                 name={'option_' + (index + 1)}
@@ -93,7 +94,7 @@ class PollForm extends Component {
                       <span className='form__link' onClick={this.addOption}>More options (+)</span>
                   </div>
 
-                <input type='submit' value={this.props.submit} className='form__submit' />
+                <Button type='submit' className='form__submit'>{this.props.submit}</Button>
             </form>
         );
     }

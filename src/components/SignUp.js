@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import Form from './Form';
+import UserForm from './UserForm';
 
 
 class SignUp extends Component {
@@ -32,7 +32,7 @@ class SignUp extends Component {
                     <h2 className='h2'>Create new account</h2>
                 </div>
                 <div className='panel__body'>
-                    <Form action='/api/users' onCompletion={this.handleCompletion} />
+                    <UserForm action='/api/users' onCompletion={this.handleCompletion} />
                 </div>
             </div>
         );

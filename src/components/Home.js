@@ -1,6 +1,30 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import Poll from './Poll';
+import PollQuestion from './PollQuestion';
+import PollChart from './PollChart';
+import Loading from './Loading';
+
+
+function PollList({ polls, selectPoll }) {
+    return (
+        <div className='polls'>
+            {polls.map(poll => {
+                const options = poll.options.map(option => option.content);
+                const votes = poll.options.map(option => option.votes.length);
+
+                return (
+                    <article key={'poll.' + poll._id} className='card poll' onClick={() => { selectPoll(poll); }}>
+                        <PollQuestion question={poll.question} />
+                        {votes.some(vote => vote > 0)
+                            ? <PollChart labels={options} data={votes} />
+                            : <div className='poll-info'>Be the first to vote.</div>
+                        }
+                    </article>
+                );
+            })}
+        </div>
+    );
+};
 
 
 class Home extends Component {
@@ -8,13 +32,14 @@ class Home extends Component {
         super(props);
 
         this.state = {
-            polls: []
+            polls: null
         };
 
-        this.populate = this.populate.bind(this);
+        this.fetchPolls = this.fetchPolls.bind(this);
+        this.selectPoll = this.selectPoll.bind(this);
     }
 
-    populate(polls) {
+    fetchPolls() {
         const url = '/api/polls';
 
         axios.get(url)
@@ -26,20 +51,21 @@ class Home extends Component {
             });
     }
 
+    selectPoll(poll) {
+        this.props.selectPoll(poll);
+    }
+
     componentDidMount() {
-        this.populate(this.state.polls);
+        this.fetchPolls();
     }
 
     render() {
-        const polls = this.state.polls;
-        const listPolls = polls.map(poll =>
-            <Poll key={poll._id} poll={poll} />
-        ); 
+        if (!this.state.polls) {
+            return <Loading />;
+        }
 
         return (
-            <div>
-                {listPolls}
-            </div>
+            <PollList polls={this.state.polls} selectPoll={this.selectPoll} />
         );
     }
 }

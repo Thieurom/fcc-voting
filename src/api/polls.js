@@ -26,5 +26,4 @@ pollRouter.route('/')
         });
     });
 
-
 export default pollRouter;
