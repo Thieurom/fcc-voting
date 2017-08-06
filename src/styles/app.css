@@ -167,6 +167,13 @@ a {
 .button:focus {
     outline: 0;
 }
+.button--disabled {
+    background-color: #8cf6a4;
+    cursor: not-allowed;
+}
+.button--disabled:hover {
+    background-color: #8cf6a4;
+}
 
 .form__link {
     font-size: 0.875rem;

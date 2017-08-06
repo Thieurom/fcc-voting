@@ -10,7 +10,7 @@ function PollList({ polls, selectPoll }) {
         <div className='polls'>
             {polls.map(poll => {
                 const options = poll.options.map(option => option.content);
-                const votes = poll.options.map(option => option.votes.length);
+                const votes = poll.options.map(option => option.votes);
 
                 return (
                     <article key={'poll.' + poll._id} className='card poll' onClick={() => { selectPoll(poll); }}>
@@ -57,6 +57,24 @@ class Home extends Component {
 
     componentDidMount() {
         this.fetchPolls();
+    }
+
+    componentWillReceiveProps(nextProps) {
+        const votedPoll = nextProps.votedPoll;
+
+        if (votedPoll && (this.props.votedPoll !== votedPoll)) {
+            let polls = this.state.polls;
+
+            const updatedPolls = polls.map(poll => {
+                if (poll._id === votedPoll._id) {
+                    return votedPoll;
+                }
+
+                return poll;
+            });
+
+            this.setState({ polls: updatedPolls });
+        }
     }
 
     render() {

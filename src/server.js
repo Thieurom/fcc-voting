@@ -17,6 +17,8 @@ const SECRET = process.env.SECRET || 'secret-123-456-789';
 
 
 // Database server
+mongoose.Promise = global.Promise;
+
 mongoose.connect(DATABASE, {
     useMongoClient: true
 });

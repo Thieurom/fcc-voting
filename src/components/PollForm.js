@@ -13,10 +13,7 @@ class PollForm extends Component {
         this.state = {
             poll: {
                 question: '',
-                options: [
-                    { content: '' },
-                    { content: '' }
-                ]
+                options: ['', '']
             },
             error: null
         };
@@ -36,7 +33,7 @@ class PollForm extends Component {
 
         } else {
             const optionId = parseInt(field.substr(7));
-            poll.options[optionId - 1].content = value;
+            poll.options[optionId - 1] = value;
         }
 
         this.setState({ poll });
@@ -45,7 +42,7 @@ class PollForm extends Component {
     addOption() {
         const poll = this.state.poll;
 
-        poll.options.push({ content: '' });
+        poll.options.push('');
         this.setState({ poll });
     }
 
@@ -72,7 +69,7 @@ class PollForm extends Component {
             <UserInput key={'option_' + (index + 1)}
                 label={'Option ' + (index + 1)}
                 name={'option_' + (index + 1)}
-                value={option.content}
+                value={option}
                 onChange={this.handleChange}
             />
         );
@@ -94,6 +91,9 @@ class PollForm extends Component {
                       <span className='form__link' onClick={this.addOption}>More options (+)</span>
                   </div>
 
+                {this.state.error &&
+                    <div className='form__error'>{this.state.error}</div>
+                }
                 <Button type='submit' className='form__submit'>{this.props.submit}</Button>
             </form>
         );

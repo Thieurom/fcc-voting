@@ -58,7 +58,7 @@ class PollChart extends Component {
         const data = {
             labels: this.props.labels,
             datasets: [{
-                data: [0, 0],
+                data: this.props.data,
                 backgroundColor: barBackgroundColors,
                 borderColor: barBorderColors,
                 borderWidth: 1

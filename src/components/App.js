@@ -10,39 +10,8 @@ import Home from './Home';
 import LogIn from './LogIn';
 import SignUp from './SignUp';
 import PollCreation from './PollCreation';
-import PollQuestion from './PollQuestion';
-import PollChart from './PollChart';
-import PollOption from './PollOption';
-import Button from './Button';
+import PollModal from './PollModal';
 import TokenStore from '../utils/tokenStore';
-
-
-function PollModal({ poll, onClick, dismiss }) {
-    const options = poll.options.map(option => option.content);
-    const votes = poll.options.map(option => option.votes.length);
-
-    return (
-        <div className='modal' onClick={onClick} >
-            <button className='modal__dismiss' onClick={dismiss}><i className='fa fa-times'></i></button>
-            <div className='modal__inner'>
-                <PollQuestion question={poll.question} />
-
-                {votes.some(vote => vote > 0)
-                    ? <PollChart labels={options} data={votes} />
-                    : <div className='poll-info'>Be the first to vote.</div>
-                }
-
-                <form className='form'>
-                    <div className='form__options'>
-                        {options.map((option, index) => (
-                            <PollOption key={'modal.poll.option.' + (index + 1)}option={option} />))}
-                    </div>
-                    <Button type='submit'>Vote</Button>
-                </form>
-            </div>
-        </div>
-    );
-}
 
 
 class App extends Component {
@@ -51,7 +20,8 @@ class App extends Component {
 
         this.state = {
             isAuthenticated: this.isAuthenticated(),
-            modal: null
+            modal: null,
+            votedPoll: null
         };
 
         this.authenticateUser = this.authenticateUser.bind(this);
@@ -59,6 +29,7 @@ class App extends Component {
         this.showPollModal = this.showPollModal.bind(this);
         this.dismissPollModal = this.dismissPollModal.bind(this);
         this.handleClickModal = this.handleClickModal.bind(this);
+        this.handleVote = this.handleVote.bind(this);
     }
 
     authenticateUser(token) {
@@ -90,6 +61,10 @@ class App extends Component {
         this.setState({ modal: null });
     }
 
+    handleVote(votedPoll) {
+        this.setState({ modal: null, votedPoll });
+    }
+
     render() {
         return (
             <Router>
@@ -98,7 +73,7 @@ class App extends Component {
                     <main className='main'>
                         <div className='main__inner'>
                             <Route exact path='/' render={() => (
-                                <Home selectPoll={this.showPollModal} />
+                                <Home selectPoll={this.showPollModal} votedPoll={this.state.votedPoll} />
                             )} />
                             <Route path='/login' render={() => (
                                 <LogIn isAuthenticated={this.state.isAuthenticated} afterLogin={this.authenticateUser} />
@@ -112,7 +87,7 @@ class App extends Component {
                     <Footer />
 
                     {this.state.modal &&
-                        (<PollModal poll={this.state.modal} onClick={this.handleClickModal} dismiss={this.dismissPollModal} />)}
+                        (<PollModal poll={this.state.modal} onClick={this.handleClickModal} dismiss={this.dismissPollModal} onVote={this.handleVote}/>)}
                 </div>
             </Router>
         );

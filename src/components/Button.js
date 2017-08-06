@@ -3,23 +3,26 @@ import PropTypes from 'prop-types';
 
 
 function Button(props) {
-    let className = 'button';
-
-    if (props.className) {
-        className = className + ' ' + props.className;
-    }
+    const { disabled, type } = props;
 
     return (
-        <button type={props.type} className={className}>{props.children}</button>
+        <button
+            className={disabled ? 'button button--disabled' : 'button'}
+            disabled={disabled}
+            type={type}>
+            {props.children}
+        </button>
     );
 }
 
 Button.propTypes = {
     type: PropTypes.oneOf(['button', 'submit', 'reset']),
+    disabled: PropTypes.bool,
     className: PropTypes.string
 };
 
 Button.defaultProps = {
+    disabled: false,
     type: 'button'
 }
 

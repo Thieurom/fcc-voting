@@ -6,26 +6,26 @@ const Schema = mongoose.Schema;
 const Option = new Schema({
     content: {
         type: String,
-        required: true
+        required: [true, 'One or more options are not given.']
     },
-    votes: [{
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'User'
-    }]
+    votes: {
+        type: Number,
+        defautl: 0
+    }
 }, {
     timestamps: true
 });
 
-const Poll = Schema({
+const Poll = new Schema({
     question: {
         type: String,
-        required: true
+        required: [true, 'Question is not given.']
     },
     options: [Option],
-    creator: {
+    voters: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User'
-    }
+    }]
 }, {
     timestamps: true
 });
