@@ -84,7 +84,7 @@ class App extends Component {
                                 <NewPoll isAuthenticated={this.state.isAuthenticated} />
                             )} />
                             <Route path='/dashboard' render={() => (
-                                <Dashboard />
+                                <Dashboard isAuthenticated={this.state.isAuthenticated} />
                             )} />
                         </div>
                     </main>

@@ -96,4 +96,15 @@ pollRouter.patch('/:pollId/options', Auth.requireAuthenticate, (req, res, next) 
 });
 
 
+pollRouter.delete('/:pollId', Auth.requireAuthenticate, (req, res, next) => {
+    const pollId = req.params['pollId'];
+
+    Poll.findByIdAndRemove(pollId)
+        .then(poll => {
+            res.status(200).json(poll);
+        })
+        .catch(error => next(error));
+})
+
+
 export default pollRouter;

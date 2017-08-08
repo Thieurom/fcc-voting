@@ -20,6 +20,7 @@ class Dashboard extends Component {
 
         this.fetchUserPolls = this.fetchUserPolls.bind(this);
         this.replaceUserPoll = this.replaceUserPoll.bind(this);
+        this.removeUserPoll = this.removeUserPoll.bind(this);
     }
 
     fetchUserPolls() {
@@ -45,6 +46,12 @@ class Dashboard extends Component {
         this.setState({ polls });
     }
 
+    removeUserPoll(pollId) {
+        this.setState(prevState => ({
+            polls: prevState.polls.filter(poll => poll._id !== pollId)
+        }));
+    }
+
     componentDidMount() {
         this.fetchUserPolls();
     }
@@ -64,7 +71,9 @@ class Dashboard extends Component {
                             key={'poll.option.' + (index + 1)}
                             option={option} />))}
                 </div>
-                <PollEditForm poll={poll} onAddOption={this.replaceUserPoll}/>
+                <PollEditForm poll={poll}
+                              onAddOption={this.replaceUserPoll}
+                              onDeletion={this.removeUserPoll} />
             </article>);
 
         return (

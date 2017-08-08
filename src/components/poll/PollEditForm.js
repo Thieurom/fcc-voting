@@ -29,6 +29,19 @@ class PollEditForm extends Component {
     }
 
     deletePoll() {
+        const url = `/api/polls/${this.props.poll._id}`;
+
+        axios.delete(url, { headers: { 'Authorization': `Bearer ${TokenStore.get()}` }})
+             .then(response => {
+                this.props.onDeletion(this.props.poll._id);
+             })
+             .catch(error => {
+                 const message = error.response.data.error;
+
+                 this.setState({
+                     error: message
+                 });
+             });
     }
 
     handleChange(event) {
