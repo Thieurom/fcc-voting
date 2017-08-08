@@ -26,6 +26,7 @@ class App extends Component {
         };
 
         this.authenticateUser = this.authenticateUser.bind(this);
+        this.deauthenticateUser = this.deauthenticateUser.bind(this);
         this.isAuthenticated = this.isAuthenticated.bind(this);
         this.showPollModal = this.showPollModal.bind(this);
         this.dismissPollModal = this.dismissPollModal.bind(this);
@@ -36,6 +37,11 @@ class App extends Component {
     authenticateUser(token) {
         TokenStore.store(token);
         this.setState({ isAuthenticated: true });
+    }
+
+    deauthenticateUser() {
+        TokenStore.destroy();
+        this.setState({ isAuthenticated: false });
     }
 
     isAuthenticated() {
@@ -70,7 +76,8 @@ class App extends Component {
         return (
             <Router>
                 <div>
-                    <Header isAuthenticated={this.state.isAuthenticated} />
+                    <Header isAuthenticated={this.state.isAuthenticated}
+                            handleLogout={this.deauthenticateUser} />
                     <main className='main'>
                         <div className='main__inner'>
                             <Route exact path='/' render={() => (

@@ -3,7 +3,13 @@ import PropTypes from 'prop-types';
 import { Link } from 'react-router-dom';
 
 
-function Header({ isAuthenticated }) {
+function Header({ isAuthenticated, handleLogout }) {
+    const _logout = (event) => {
+        event.preventDefault();
+        handleLogout();
+    }
+
+
     return (
         <header className='header'>
             <div className='header__inner'>
@@ -17,7 +23,7 @@ function Header({ isAuthenticated }) {
                                     <Link to='/dashboard' className='nav__link'>Dashboard</Link>
                                 </li>
                                 <li className='dropdown__item'>
-                                    <Link to='/logout' className='nav__link'>Log out</Link>
+                                    <Link to='/logout' className='nav__link' onClick={_logout} >Log out</Link>
                                 </li>
                             </ul>
                         </div>

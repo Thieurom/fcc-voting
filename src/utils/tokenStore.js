@@ -8,6 +8,10 @@ const TokenStore = {
 
     store(token) {
         Cookies.set('auth_token', token);
+    },
+
+    destroy() {
+        Cookies.remove('auth_token');
     }
 };
 

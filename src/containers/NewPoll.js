@@ -1,5 +1,4 @@
-impor
-            t React, { Component } from 'react';
+import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PollForm from '../components/poll/PollForm';
 
