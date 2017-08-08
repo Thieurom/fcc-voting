@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import PollQuestion from './PollQuestion';
-import PollChart from './PollChart';
-import PollOption from './PollOption';
-import Button from './Button';
-import TokenStore from '../utils/tokenStore';
+import PollQuestion from '../poll/PollQuestion';
+import PollChart from '../poll/PollChart';
+import PollOption from '../poll/PollOption';
+import Button from '../common/Button';
+import TokenStore from '../../utils/tokenStore';
 
 
 class PollModal extends Component {
@@ -27,7 +27,7 @@ class PollModal extends Component {
     handleSubmit(event) {
         event.preventDefault();
 
-        const url = `/api/polls/${this.props.poll._id}`;
+        const url = `/api/polls/${this.props.poll._id}/votes`;
         axios.patch(url, {
             option: this.state.selectedOption
         }, {

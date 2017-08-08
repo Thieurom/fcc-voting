@@ -122,6 +122,10 @@ a {
     line-height: 32px;
     cursor: pointer;
 }
+.form__label--disabled {
+    color: #9b9b9b;
+    cursor: not-allowed;
+}
 
 .form__radio {
     margin-right: 0.5rem;
@@ -167,6 +171,11 @@ a {
 .button:focus {
     outline: 0;
 }
+.button:not(:last-of-type) {
+    margin-right: 15px;
+}
+
+
 .button--disabled {
     background-color: #8cf6a4;
     cursor: not-allowed;
@@ -180,6 +189,9 @@ a {
     font-weight: 400;
     color: #2DB84D;
     cursor: pointer;
+}
+.form__link--danger {
+    color: #FF0054;
 }
 
 

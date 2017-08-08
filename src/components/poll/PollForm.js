@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import axios from 'axios';
-import UserInput from './UserInput';
-import Button from './Button';
-import TokenStore from '../utils/tokenStore';
+import UserInput from '../common/UserInput';
+import Button from '../common/Button';
+import TokenStore from '../../utils/tokenStore';
 
 
 class PollForm extends Component {

@@ -1,8 +1,8 @@
 import React, { Component } from 'react';
 import axios from 'axios';
-import PollQuestion from './PollQuestion';
-import PollChart from './PollChart';
-import Loading from './Loading';
+import PollQuestion from '../components/poll/PollQuestion';
+import PollChart from '../components/poll/PollChart';
+import Loading from '../components/common/Loading';
 
 
 function PollList({ polls, selectPoll }) {
@@ -44,11 +44,9 @@ class Home extends Component {
 
         axios.get(url)
             .then(response => {
-                return response.data;
-            })
-            .then(polls => {
+                const polls = response.data;
                 this.setState({polls});
-            });
+            })
     }
 
     selectPoll(poll) {

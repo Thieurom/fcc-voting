@@ -2,8 +2,8 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Redirect } from 'react-router-dom';
 import axios from 'axios';
-import UserInput from './UserInput';
-import Button from './Button';
+import UserInput from '../common/UserInput'
+import Button from '../common/Button';
 
 
 class UserForm extends Component {

@@ -14,7 +14,7 @@ function Header({ isAuthenticated }) {
                             <i className='fa fa-user-circle' style={{fontSize: '20px'}}></i>
                             <ul className='dropdown'>
                                 <li className='dropdown__item'>
-                                    <Link to='/profile' className='nav__link'>Profile</Link>
+                                    <Link to='/dashboard' className='nav__link'>Dashboard</Link>
                                 </li>
                                 <li className='dropdown__item'>
                                     <Link to='/logout' className='nav__link'>Log out</Link>

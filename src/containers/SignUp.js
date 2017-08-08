@@ -1,39 +1,43 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
-import PollForm from './PollForm';
+import PropTypes from 'prop-types';
+import UserForm from '../components/user/UserForm';
 
 
-class PollCreation extends Component {
+class SignUp extends Component {
     constructor(props) {
         super(props);
 
         this.state = {
             completed: false
-        }
+        };
 
         this.handleCompletion = this.handleCompletion.bind(this);
     }
 
     handleCompletion(response) {
-        this.setState({ completed: true });
+        this.setState({
+            completed: true
+        });
     }
 
     render() {
         if (this.state.completed) {
-            return <Redirect to='/' />;
+            return <Redirect to='/login' />;
         }
 
         return (
             <div className='panel'>
                 <div className='panel__heading'>
-                    <h2 className='h2'>Create new poll</h2>
+                    <h2 className='h2'>Create new account</h2>
                 </div>
                 <div className='panel__body'>
-                    <PollForm action='/api/polls' submit='Create' onCompletion={this.handleCompletion} />
+                    <UserForm action='/api/users' onCompletion={this.handleCompletion} />
                 </div>
             </div>
         );
     }
 }
 
-export default PollCreation;
+
+export default SignUp;

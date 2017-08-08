@@ -9,8 +9,9 @@ import Footer from './Footer';
 import Home from './Home';
 import LogIn from './LogIn';
 import SignUp from './SignUp';
-import PollCreation from './PollCreation';
-import PollModal from './PollModal';
+import NewPoll from './NewPoll';
+import PollModal from '../components/modal/PollModal';
+import Dashboard from './Dashboard';
 import TokenStore from '../utils/tokenStore';
 
 
@@ -80,7 +81,10 @@ class App extends Component {
                             )} />
                             <Route path='/signup' component={SignUp} />
                             <Route path='/new' render={() => (
-                                <PollCreation isAuthenticated={this.state.isAuthenticated} />
+                                <NewPoll isAuthenticated={this.state.isAuthenticated} />
+                            )} />
+                            <Route path='/dashboard' render={() => (
+                                <Dashboard />
                             )} />
                         </div>
                     </main>

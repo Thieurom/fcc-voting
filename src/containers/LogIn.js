@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Redirect } from 'react-router-dom';
 import PropTypes from 'prop-types';
-import UserForm from './UserForm';
+import UserForm from '../components/user/UserForm';
 
 
 class LogIn extends Component {

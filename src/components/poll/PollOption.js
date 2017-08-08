@@ -2,12 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 
 
-function PollOption({ option, onClick }) {
+function PollOption({ disabled, option, onClick }) {
+    let labelClass = 'form__label form__label--with-radio';
+    if (disabled) labelClass += ' form__label--disabled';
+
     return (
-        <label className='form__label form__label--with-radio'>
+        <label className={labelClass}>
             <input
                 className='form__radio'
                 type='radio'
+                disabled={disabled}
                 name='option'
                 data-option-id={option._id}
                 value={option.content}
@@ -18,10 +22,12 @@ function PollOption({ option, onClick }) {
 }
 
 PollOption.propTypes = {
+    disabled: PropTypes.bool,
     option: PropTypes.shape({
         _id: PropTypes.string.isRequired,
         content: PropTypes.string.isRequired
-    })
+    }),
+    onClick: PropTypes.func
 };
 
 export default PollOption;
